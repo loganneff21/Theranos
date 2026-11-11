@@ -1,0 +1,29 @@
+{
+  "name": "theranos-boardroom-game",
+  "version": "1.0.0",
+  "description": "Live phone game for the Governance at Theranos student-led session",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/simulate.js",
+    "bots": "node test/bots.js",
+    "qr": "node scripts/make-qr.js",
+    "launch": "node launch.js"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "express": "^5.3.0",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.4"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.4"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "private": true,
+  "optionalDependencies": {
+    "cloudflared": "^0.7.3"
+  }
+}
