@@ -46,7 +46,10 @@ function freshGame() {
 game = freshGame();
 
 const phase = () => C.phases[game.phaseIndex];
-const reached = (id) => C.phases.findIndex((p) => p.id === id) <= game.maxPhase;
+const reached = (id) => {
+  const i = C.phases.findIndex((p) => p.id === id);
+  return i >= 0 && i <= game.maxPhase;
+};
 
 function newPlayer(pid, name, group) {
   return { pid, name, group, votes: {}, alloc: null, answers: {}, sockets: new Set(), joinedAt: Date.now() };
@@ -389,6 +392,7 @@ app.get('/content.json', (req, res) => {
     companyOrder: C.companyOrder,
     groups: C.groups,
     scoring: C.scoring,
+    activity2OnPhones: C.ACTIVITY2_ON_PHONES,
   });
 });
 

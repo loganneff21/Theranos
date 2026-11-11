@@ -174,6 +174,9 @@ const scoring = {
   maxPerCompany: 5,
 };
 
+// Activity #2 is played on paper; the phones sit it out.
+const ACTIVITY2_ON_PHONES = false;
+
 const groups = ['Board 1', 'Board 2', 'Board 3', 'Board 4', 'Board 5', 'Board 6'];
 
 // The run of show. The host's Next button walks this list.
@@ -190,13 +193,18 @@ const phases = [
   { id: 'm5', type: 'vote', motion: 5, section: 'Activity #1' },
   { id: 'boardReveal', type: 'boardReveal', section: 'Activity #1' },
   { id: 'callback', type: 'callback', section: 'Activity #1' },
-  { id: 'profiles', type: 'profiles', section: 'Activity #2' },
-  { id: 'invest', type: 'invest', section: 'Activity #2' },
-  ...revealOrder.map((c) => ({ id: 'reveal' + c, type: 'companyReveal', company: c, section: 'Activity #2' })),
-  { id: 'portfolio', type: 'portfolio', section: 'Activity #2' },
+  // Activity #2 runs on paper in class. Set ACTIVITY2_ON_PHONES to true to play it on phones instead.
+  ...(ACTIVITY2_ON_PHONES
+    ? [
+        { id: 'profiles', type: 'profiles', section: 'Activity #2' },
+        { id: 'invest', type: 'invest', section: 'Activity #2' },
+        ...revealOrder.map((c) => ({ id: 'reveal' + c, type: 'companyReveal', company: c, section: 'Activity #2' })),
+        { id: 'portfolio', type: 'portfolio', section: 'Activity #2' },
+      ]
+    : [{ id: 'paperBreak', type: 'paperBreak', section: 'Activity #2' }]),
   { id: 'quizIntro', type: 'quizIntro', section: 'Quiz' },
   ...quiz.map((_, i) => ({ id: 'q' + (i + 1), type: 'quiz', q: i, section: 'Quiz' })),
   { id: 'final', type: 'final', section: 'Results' },
 ];
 
-module.exports = { motions, packetA, pitch, packetB, lenses, companies, companyOrder, revealOrder, quiz, scoring, groups, phases };
+module.exports = { ACTIVITY2_ON_PHONES, motions, packetA, pitch, packetB, lenses, companies, companyOrder, revealOrder, quiz, scoring, groups, phases };
