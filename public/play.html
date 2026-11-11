@@ -79,6 +79,20 @@ input{width:100%;font:600 20px var(--sans);padding:14px;border:2px solid var(--i
 .lens{padding:7px 0;border-top:1px solid var(--soft);font-size:14px;line-height:1.35}
 .lens small{display:block;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#4b2e83}
 .story{font-size:14px;color:var(--gray);font-style:italic;margin:6px 0 4px;line-height:1.35}
+.pcard{display:block;width:100%;text-align:left;border:3px solid var(--line);background:#fff;padding:14px;margin-top:10px;font:inherit;color:var(--ink)}
+.pcard.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink) inset}
+.pcard .lab{display:inline-block;font-size:12px;font-weight:800;color:#fff;padding:3px 8px;letter-spacing:.04em}
+.lab.honest{background:var(--teal-d)}.lab.exaggeration{background:var(--amber)}.lab.lie{background:var(--red)}
+.pcard .tx{font-family:var(--serif);font-size:20px;line-height:1.25;margin:8px 0 6px;font-weight:600}
+.pcard .pts{font-size:13px;color:var(--gray)}
+.claim{font-family:var(--serif);font-size:24px;line-height:1.25;font-weight:600;border-left:6px solid var(--teal);padding:6px 0 6px 12px;margin:12px 0 16px}
+.vbtn.believe.on{background:var(--teal-d);border-color:var(--teal-d)}
+.vbtn.challenge.on{background:var(--red);border-color:var(--red)}
+.verify{display:block;width:100%;font:700 16px var(--sans);padding:14px;margin-top:6px;border:2px dashed var(--gray);background:#fff;color:var(--ink)}
+.verify:disabled{opacity:.4}
+.truthtag{padding:12px;margin:6px 0 12px;font-weight:800;color:#fff;text-align:center}
+.ceobadge{background:var(--ink);color:#fff;padding:18px;text-align:center;margin-top:10px}
+.ceobadge .big{font-size:40px}
 .fade{animation:fade .4s ease both}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .conn{position:fixed;left:0;right:0;bottom:0;background:var(--amber);color:#fff;text-align:center;font-weight:700;font-size:14px;padding:8px}
@@ -152,6 +166,8 @@ function viewKey() {
     case 'invest': return 'invest:' + JSON.stringify(m.alloc);
     case 'quiz': return ph.id + ':' + (S.quiz.revealed ? 'r' : 'o') + ':' + (m.answer ? m.answer.choice : '');
     case 'lobby': return 'lobby';
+    case 'ceoAssign': case 'pitchRound': case 'superVote': case 'pitchStandings':
+      return ph.id + ':' + ((S.round && S.round.stage) || (S.superVote && S.superVote.stage) || '') + ':' + JSON.stringify(m.pitch);
     default: return ph.id + ':' + m.score.total + ':' + m.rank;
   }
 }
@@ -199,6 +215,72 @@ const V = {
     <div class="box"><b>Board of directors</b><p>Famous outsiders, no lab expertise, couldn’t verify the technology.</p></div>
     <div class="box"><b>Shareholder activism</b><p>The CEO held 99.7% of the votes; proxy votes meant nothing.</p></div>
     <div class="box"><b>Rewards and incentives</b><p>Dismissal was never a realistic threat.</p></div>`,
+
+  pitchRules: () => wait('Activity #1: The Pitch', 'One person in your group becomes CEO. The CEO pitches claims; the board decides what to believe. Watch the screen.'),
+  ceoAssign: () => {
+    const p = S.me.pitch;
+    if (p.role === 'solo') return wait('Your group needs one more person', 'Find a teammate: the game needs a CEO and at least one board member.');
+    if (p.role === 'ceo') return `<div class="center" style="padding-top:4vh"><div class="kicker">Activity #1 · The Pitch</div><div class="ceobadge fade"><div class="big">You are the CEO</div><p style="color:#ddd;margin-top:8px">Your cards appear here each round. Don’t show anyone your phone.</p></div>
+      <p style="margin-top:16px">Pick a claim, then read it aloud to your board like you mean it.</p></div>`;
+    return `<div class="center" style="padding-top:4vh"><div class="kicker">Activity #1 · The Pitch</div><h2>You’re on the board</h2>
+      <div class="big" style="font-size:34px">${esc(p.ceoName)}</div><p>is your CEO. Decide what to believe.</p>
+      <div class="box">Your board has <b>${p.tokens}</b> verify token${p.tokens === 1 ? '' : 's'} for the whole game.</div></div>`;
+  },
+  pitchRound: () => {
+    const p = S.me.pitch, r = S.round;
+    const head = `<div class="kicker">Round ${r.number} of ${r.total} · ${esc(r.topic)}</div>`;
+    if (p.role === 'solo') return head + wait('Sit this round out', 'Your group needs at least two people.');
+    if (r.stage === 'reveal' && p.result) {
+      const res = p.result, mine = res.mine;
+      const caught = res.decision === 'challenge' && res.kind !== 'honest';
+      const msg = p.role === 'ceo'
+        ? (res.decision === 'believe' ? 'Your board believed you.' : caught ? (res.immune ? 'Caught, but you’re immune.' : 'Your board caught you.') : 'Your board doubted the truth.')
+        : (res.decision === 'believe' ? (res.kind === 'honest' ? 'Your board trusted the truth.' : 'Your board believed it: you got played.') : (caught ? 'Your board caught it.' : 'Your board challenged the truth.'));
+      return `${head}<div class="res ${mine > 0 ? 'good' : mine < 0 ? 'bad' : 'none'}"><div style="font-size:16px;opacity:.85">${p.role === 'ceo' ? 'You pitched' : 'Your CEO told you'}</div>
+        <div class="big" style="font-size:36px">${esc(res.label)}</div><div style="font-size:18px;margin-top:6px">${esc(msg)} ${mine > 0 ? '+' : ''}${mine} ${p.role === 'ceo' ? 'for you' : 'for the board'}</div></div>
+        <div class="claim" style="font-size:18px">${esc(res.text)}</div>
+        <div class="vrow"><span>${p.role === 'ceo' ? 'Your CEO points' : 'Board points'}</span><b>${p.teamPoints}</b></div>`;
+    }
+    if (p.role === 'ceo') {
+      if (r.stage === 'pick') {
+        return `${head}<h2>What will you tell your board?</h2><p>Tap a card. You can change it until the host moves on.</p>
+          ${p.cards.map((c, i) => `<button class="pcard ${p.picked === i ? 'on' : ''}" data-i="${i}"><span class="lab ${c.kind}">${esc(c.label)}</span>
+            <div class="tx">${esc(c.text)}</div><div class="pts">If believed: ${sign(c.ifBelieved)} · If challenged: ${sign(c.ifChallenged)}${p.immune && c.ifChallenged < 0 ? ' (immune: 0)' : ''}</div></button>`).join('')}
+          ${p.picked !== null ? '<div class="ok" style="margin-top:12px">✓ Now read it aloud to your board.</div>' : ''}`;
+      }
+      const c = p.cards[p.picked];
+      return `${head}<h2>Your board is deciding…</h2><div class="claim">${esc(c.text)}</div><p>Hold your poker face.${p.immune ? ' You’re immune: getting caught costs you nothing.' : ''}</p>`;
+    }
+    if (r.stage === 'pick') return head + wait(`${p.ceoName} is choosing what to tell you…`, 'Listen closely when they pitch.');
+    return `${head}<div class="muted">${esc(p.ceoName)} says:</div><div class="claim">${esc(p.claim)}</div>
+      ${p.verified ? `<div class="truthtag lab ${p.truthLabel.toLowerCase()}">Verified: this is ${p.truthLabel === 'Honest' ? 'honest' : p.truthLabel === 'Lie' ? 'a lie' : 'an exaggeration'}</div>` : ''}
+      <button class="vbtn believe ${p.myVote === 'believe' ? 'on' : ''}" data-v="believe">Believe</button>
+      <button class="vbtn challenge ${p.myVote === 'challenge' ? 'on' : ''}" data-v="challenge">Challenge</button>
+      ${p.verified ? '' : `<button class="verify" id="verify" ${p.tokens <= 0 ? 'disabled' : ''}>🔍 Verify for your whole board (${p.tokens} left)</button>`}
+      ${p.myVote ? '<div class="ok">✓ Vote saved. You can change it until the host moves on.</div>' : ''}`;
+  },
+  superVote: () => {
+    const p = S.me.pitch, sv = S.superVote;
+    if (p.role === 'solo') return wait('Sit this one out', 'Your group needs at least two people.');
+    if (sv.stage === 'reveal' && p.result) {
+      const ok = p.result.decision === 'approve';
+      return `<div class="kicker">Surprise proposal</div><div class="res ${ok ? (p.role === 'ceo' ? 'good' : 'bad') : (p.role === 'ceo' ? 'none' : 'good')}"><div class="big" style="font-size:36px">${ok ? 'Approved' : 'Rejected'}</div>
+        <div style="font-size:18px;margin-top:6px">${ok ? 'The CEO can no longer lose points for getting caught.' : 'The board kept its power.'}</div></div>
+        <p style="margin-top:14px">${esc(sv.real)}</p>`;
+    }
+    if (p.role === 'ceo') return `<div class="kicker">Surprise proposal</div><h2>Lobby your board</h2><div class="claim">${esc(sv.text)}</div>
+      <p>If they approve: you get +${C.superMotion.approve.ceo} and can no longer lose points for getting caught. Make your case.</p>`;
+    return `<div class="kicker">Surprise proposal · ${esc(p.ceoName)} asks:</div><div class="claim">${esc(sv.text)}</div>
+      <p style="margin-bottom:12px">If approved, your CEO gets +${C.superMotion.approve.ceo} and can’t lose points for getting caught again. Ties go to the CEO.</p>
+      <button class="vbtn believe ${p.myVote === 'approve' ? 'on' : ''}" data-s="approve">Approve</button>
+      <button class="vbtn challenge ${p.myVote === 'reject' ? 'on' : ''}" data-s="reject">Reject</button>
+      ${p.myVote ? '<div class="ok">✓ Vote saved.</div>' : ''}`;
+  },
+  pitchStandings: () => {
+    const p = S.me.pitch;
+    return `<div class="center"><div class="kicker">Activity #1 · Results</div><h2>${p.role === 'ceo' ? 'Your CEO score' : 'Your board’s score'}</h2><div class="big">${p.teamPoints > 0 ? '+' : ''}${p.teamPoints}</div><p>Check the big screen for the rankings.</p></div>`;
+  },
+  pitchTruth: () => wait('What Theranos really said', 'Every lie card was a real claim to investors. Watch the screen.'),
   paperBreak: () => wait('Phones down for Activity #2', 'It’s on paper with your group. Keep this page open; the final quiz comes back here.'),
   profiles: () => `<div class="kicker">Activity #2 · You have $10M</div><h2>Study the four companies</h2><p>Investing opens next. Names are disguised; judge them with the lecture’s Deep Dive lenses.</p>
     ${C.companyOrder.map((k) => coCard(k, false)).join('')}`,
@@ -243,10 +325,12 @@ const V = {
     const s = S.me.score;
     return `<div class="center" style="padding-top:4vh"><div class="kicker">Final results</div><h2>You finished</h2>
       <div class="big">#${S.me.rank}</div><p>of ${S.me.of} players</p>
-      <div class="box breakdown"><span>Board votes</span><b>${s.votes}</b>${C.activity2OnPhones ? `<span>Portfolio</span><b>${s.portfolio}</b>` : ''}<span>Quiz</span><b>${s.quiz}</b>
+      <div class="box breakdown"><span>Activity #1</span><b>${s.votes}</b>${C.activity2OnPhones ? `<span>Portfolio</span><b>${s.portfolio}</b>` : ''}<span>Quiz</span><b>${s.quiz}</b>
       <span style="font-weight:800;color:var(--ink)">Total</span><b>${s.total.toLocaleString()}</b></div></div>`;
   },
 };
+
+function sign(n) { return (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n); }
 
 function coCard(k, stepper) {
   const c = C.companies[k];
@@ -259,6 +343,24 @@ function coCard(k, stepper) {
 }
 
 const bind = {
+  ceoAssign: () => {},
+  pitchRound: () => {
+    document.querySelectorAll('.pcard').forEach((b) => b.onclick = () => {
+      document.querySelectorAll('.pcard').forEach((x) => x.classList.toggle('on', x === b));
+      socket.emit('pitch:pick', +b.dataset.i);
+    });
+    document.querySelectorAll('.vbtn[data-v]').forEach((b) => b.onclick = () => {
+      document.querySelectorAll('.vbtn[data-v]').forEach((x) => x.classList.toggle('on', x === b));
+      socket.emit('pitch:vote', b.dataset.v);
+    });
+    const v = $('#verify');
+    if (v) v.onclick = () => { v.disabled = true; socket.emit('pitch:verify'); };
+  },
+  superVote: () => document.querySelectorAll('.vbtn[data-s]').forEach((b) => b.onclick = () => {
+    document.querySelectorAll('.vbtn[data-s]').forEach((x) => x.classList.toggle('on', x === b));
+    socket.emit('pitch:super', b.dataset.s);
+  }),
+
   vote: () => document.querySelectorAll('.vbtn').forEach((b) => b.onclick = () => {
     document.querySelectorAll('.vbtn').forEach((x) => x.classList.toggle('on', x === b));
     socket.emit('vote', b.dataset.o);

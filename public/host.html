@@ -85,6 +85,36 @@ h2{font-size:46px;line-height:1.1;font-weight:700}
 .mech h4{font-family:var(--sans);font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray)}
 .mech b{display:block;font-size:30px;margin:2px 0}
 .mech p{font-size:22px;line-height:1.3}
+/* pitch game */
+.noanim *{animation:none!important}
+.gcards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+.gcard{border:1px solid var(--line);padding:16px 18px;background:#fff;font-family:var(--sans)}
+.gcard .g{font-size:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray)}
+.gcard .ceo{font-family:var(--serif);font-size:32px;font-weight:700;margin:4px 0 2px}
+.gcard .meta{font-size:16px;color:var(--gray)}
+.gcard .st{margin-top:10px;font-size:20px;font-weight:700}
+.gcard .st.ok{color:var(--teal-d)}.gcard .st.wait{color:var(--amber)}
+.tok{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--teal);margin-right:4px;vertical-align:-1px}
+.tok.used{background:#ddd}
+.kind{display:inline-block;font-family:var(--sans);font-weight:800;font-size:15px;padding:4px 10px;color:#fff}
+.kind.honest{background:var(--teal-d)}.kind.exaggeration{background:var(--amber)}.kind.lie{background:var(--red)}
+.ptab{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:20px}
+.ptab th{font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:var(--gray);text-align:left;padding:8px 12px;border-bottom:2px solid var(--ink)}
+.ptab td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.ptab td.num{font-weight:800;font-size:24px;text-align:right}
+.ptab tr{opacity:0;animation:fade .45s ease forwards}
+.pos{color:var(--teal-d)}.neg{color:var(--red)}
+.truthbox{margin-top:22px;border-left:8px solid var(--red);padding:10px 18px;background:#fff6f4;font-size:24px;line-height:1.35;animation:fade .5s 1.2s ease both}
+.truthbox b{font-family:var(--sans);font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--red);display:block;margin-bottom:4px}
+.rules3{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:28px;margin-top:6px}
+.rules3 h3{font-size:30px;margin-bottom:8px}
+.rules3 ul{font-size:23px;line-height:1.35;padding-left:22px}
+.rules3 li{margin-bottom:8px}
+.stab{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:21px}
+.stab th{background:var(--teal);color:#fff;padding:10px;text-align:center}
+.stab td{padding:10px;border:1px solid var(--line);text-align:center;font-weight:700}
+.stab td:first-child{text-align:left}
+.motionbig{font-size:46px;line-height:1.2;font-weight:600;max-width:1400px;margin:10px 0 14px}
 /* pitch */
 body.dark{background:#0d0d0e;color:#f3f3f3}
 body.dark header{background:#2a2a2c}
@@ -246,8 +276,10 @@ const pct = (n, total) => total ? Math.round((n / total) * 100) : 0;
 
 function render() {
   const ph = S.phase;
-  const changed = lastPhase !== ph.id;
-  lastPhase = ph.id;
+  const key = ph.id + ':' + ((S.hostView && S.hostView.pitchStage) || '');
+  const changed = lastPhase !== key;
+  lastPhase = key;
+  if (changed) $('#main').classList.remove('noanim');
   tabs();
   document.body.classList.toggle('dark', ph.type === 'pitch');
   $('#joinChip').hidden = ph.type === 'lobby';
@@ -305,9 +337,9 @@ const views = {
     const total = Object.values(w.tally).reduce((a, b) => a + b, 0);
     const noPct = pct(w.tally['No'] || 0, total);
     const mech = [
-      ['Board of directors', 'Famous, but not effective', 'Outsiders with no lab-medicine expertise, recruited by the CEO, who could not verify the technology.'],
-      ['Shareholder activism', 'Switched off', 'With 99.7% of the votes held by the CEO, other shareholders’ proxy votes meant nothing.'],
-      ['Rewards and incentives', 'No real threat', 'Dismissal was never realistic: the CEO controlled the votes that elect the board.'],
+      ['Board of directors', 'Couldn’t verify the agent', 'Like your boards, the real one heard confident claims and had no cheap way to check them.'],
+      ['Shareholder activism', 'Switched off', 'Approving 99.7% voting control made the CEO immune, in the game and in real life.'],
+      ['Rewards and incentives', 'Paid to deceive', 'Our scoring rewarded lies that weren’t caught. With no threat of dismissal, so did Theranos’s.'],
     ];
     return `${titlebar('Activity #1 · Back to lecture', 'All three governance mechanisms failed', '')}
       <div class="cb"><div><div class="kicker">Your warm-up vote</div>
@@ -316,6 +348,73 @@ const views = {
         <div class="punch" style="font-size:24px;border-color:#4b2e83">${noPct}% of you wouldn’t invest in that company. But Theranos’s board was famous outsiders, not insiders, and it still failed: independence on paper isn’t oversight.</div></div>
       <div class="mechs">${mech.map((m, i) => `<div class="mech" style="animation-delay:${0.4 + i * 0.7}s"><h4>${m[0]}</h4><b>${m[1]}</b><p>${m[2]}</p></div>`).join('')}</div></div>`;
   },
+
+  pitchRules: () => {
+    const pp = C.pitchPoints;
+    const row = (k, l) => `<tr><td>${l}</td><td>${fmt(pp[k].believe[0])} / ${fmt(pp[k].believe[1])}</td><td>${fmt(pp[k].challenge[0])} / ${fmt(pp[k].challenge[1])}</td></tr>`;
+    return `${titlebar('Activity #1 · The Pitch', 'CEO vs. the Board', 'One person in each group becomes CEO. Everyone else is the board.')}
+      <div class="rules3 fade">
+        <div><h3>The CEO</h3><ul><li>Each round, picks one of three claims: <b>honest</b>, <b>exaggerated</b> or a <b>lie</b></li><li>Reads it aloud to the board, with confidence</li><li>Less true pays more, if the board believes it</li></ul></div>
+        <div><h3>The Board</h3><ul><li>Votes <b>Believe</b> or <b>Challenge</b> on their phones</li><li>Has ${C.verifyTokens} <b>verify</b> tokens for the whole game: spend one to see the truth</li><li>Ties go to the CEO</li></ul></div>
+        <div><h3>Scoring <span style="font-size:18px;color:var(--gray);font-weight:400">(CEO / Board)</span></h3>
+          <table class="stab"><tr><th></th><th>Believed</th><th>Challenged</th></tr>${row('honest', 'Honest')}${row('exaggeration', 'Exaggeration')}${row('lie', 'Lie')}</table>
+          <div class="sub" style="font-size:20px;margin-top:10px">${C.pitchRoundCount} rounds, with a surprise in the middle.</div></div>
+      </div>`;
+  },
+  ceoAssign: () => {
+    const solo = S.soloGroups && S.soloGroups.length ? `<div class="punch" style="font-size:22px">${esc(S.soloGroups.join(', '))}: need at least 2 people. Move someone in, then press Back and Next.</div>` : '';
+    return `${titlebar('Activity #1 · The Pitch', 'Meet your CEOs', 'CEOs: your cards are on your phone. Don’t show anyone.')}
+      <div class="gcards">${S.pitchGroups.map((g, i) => `<div class="gcard fade" style="animation-delay:${i * 0.15}s"><div class="g">${esc(g.group)}</div><div class="ceo">${esc(g.ceo)}</div><div class="meta">CEO · board of ${g.boardSize}</div></div>`).join('')}</div>${solo}`;
+  },
+  pitchRound: () => {
+    const r = S.round;
+    const head = titlebar(`Activity #1 · Round ${r.number} of ${r.total}`, esc(r.topic), {
+      pick: 'CEOs: pick a card on your phone, then read it aloud to your board.',
+      decide: 'Boards: Believe or Challenge on your phones. Verifying costs a token.',
+      reveal: 'Here’s what every CEO told their board.',
+    }[r.stage]);
+    if (r.stage !== 'reveal') {
+      return `${head}<div class="gcards">${S.pitchGroups.map((g) => {
+        const st = r.stage === 'pick'
+          ? (g.picked ? '<div class="st ok">✓ Pitch chosen</div>' : '<div class="st wait">Choosing…</div>')
+          : `<div class="st ${g.voted >= g.boardSize ? 'ok' : 'wait'}">${g.voted} of ${g.boardSize} voted${g.verified ? ' · verified' : ''}</div>`;
+        return `<div class="gcard"><div class="g">${esc(g.group)}</div><div class="ceo">${esc(g.ceo)}</div>
+          <div class="meta">${tokens(g.tokens)} verify left${g.immune ? ' · <b style="color:var(--red)">CEO immune</b>' : ''}</div>${st}</div>`;
+      }).join('')}</div>`;
+    }
+    const lie = r.cards.find((c) => c.kind === 'lie');
+    return `${head}<table class="ptab"><tr><th>Group</th><th>CEO pitched</th><th>Board</th><th style="text-align:right">CEO</th><th style="text-align:right">Board</th></tr>
+      ${S.pitchGroups.map((g, i) => `<tr style="animation-delay:${0.2 + i * 0.35}s"><td><b>${esc(g.group)}</b><br><span style="color:var(--gray);font-size:16px">${esc(g.ceo)}</span></td>
+        <td><span class="kind ${g.result.kind}">${esc(kindName(g.result.kind))}</span> <span style="font-size:17px">${esc(g.result.text)}</span></td>
+        <td>${g.result.decision === 'believe' ? 'Believed' : 'Challenged'}${g.result.verified ? ' <span style="color:var(--gray);font-size:15px">(verified)</span>' : ''}</td>
+        <td class="num ${cls(g.result.ceo)}">${fmt(g.result.ceo)}${g.result.immune && g.result.kind !== 'honest' && g.result.decision === 'challenge' ? '<div style="font-size:12px;color:var(--red)">immune</div>' : ''}</td><td class="num ${cls(g.result.board)}">${fmt(g.result.board)}</td></tr>`).join('')}</table>
+      <div class="truthbox"><b>What really happened</b>Theranos told investors: “${esc(lie.text)}” ${esc(r.truth)}</div>`;
+  },
+  superVote: () => {
+    const sv = S.superVote;
+    if (sv.stage === 'decide') {
+      return `${titlebar('Activity #1 · Surprise proposal', 'Every CEO has a motion for the board', '')}
+        <div class="concept fade">Shareholder activism</div>
+        <div class="motionbig fade">${esc(sv.text)}</div>
+        <div class="sub" style="font-size:26px">If approved: CEO +${C.superMotion.approve.ceo}, and ${esc(sv.effect.charAt(0).toLowerCase() + sv.effect.slice(1))}</div>
+        <div class="gcards" style="margin-top:24px">${S.pitchGroups.map((g) => `<div class="gcard"><div class="g">${esc(g.group)}</div><div class="ceo" style="font-size:26px">${esc(g.ceo)}</div><div class="st ${g.voted >= g.boardSize ? 'ok' : 'wait'}">${g.voted} of ${g.boardSize} voted</div></div>`).join('')}</div>`;
+    }
+    const n = S.pitchGroups.filter((g) => g.result.decision === 'approve').length;
+    return `${titlebar('Activity #1 · Surprise proposal', `${n} of ${S.pitchGroups.length} boards approved it`, '')}
+      <div class="gcards">${S.pitchGroups.map((g, i) => `<div class="gcard fade" style="animation-delay:${i * 0.25}s;border-top:8px solid ${g.result.decision === 'approve' ? 'var(--red)' : 'var(--teal)'}"><div class="g">${esc(g.group)}</div>
+        <div class="ceo" style="font-size:30px">${g.result.decision === 'approve' ? 'Approved' : 'Rejected'}</div><div class="meta">${g.result.decision === 'approve' ? 'CEO is now immune' : 'Board kept its power'}</div></div>`).join('')}</div>
+      <div class="punch fade" style="animation-delay:1.4s">${esc(sv.real)}</div>`;
+  },
+  pitchStandings: () => {
+    const maxC = Math.max(1, ...S.ceoBoard.map((g) => Math.abs(g.total.ceo)));
+    const maxB = Math.max(1, ...S.boardBoard.map((g) => Math.abs(g.total.board)));
+    return `${titlebar('Activity #1 · Results', 'CEOs vs. Boards', '')}
+      <div class="final"><div><div class="kicker">Top CEOs</div><div class="board" style="margin-top:12px">${S.ceoBoard.map((g, i) => lrow(i + 1, g.ceo, g.group, fmt(g.total.ceo), Math.max(0, g.total.ceo) / maxC, i)).join('')}</div></div>
+      <div><div class="kicker">Top Boards</div><div class="board" style="margin-top:12px">${S.boardBoard.map((g, i) => lrow(i + 1, g.group, g.boardSize + (g.boardSize === 1 ? ' member' : ' members'), fmt(g.total.board), Math.max(0, g.total.board) / maxB, i)).join('')}</div></div></div>`;
+  },
+  pitchTruth: () => `${titlebar('Activity #1 · The real Theranos', 'What Theranos actually told investors', 'Every lie card in the game was a real claim. Source: SEC complaint against Holmes and Balwani (2018).')}
+      <table class="ptab">${S.truths.map((t, i) => `<tr style="animation-delay:${0.3 + i * 0.6}s"><td style="width:13%"><b>${esc(t.topic)}</b></td><td style="width:40%;font-family:var(--serif);font-size:26px">“${esc(t.lie)}”</td><td style="font-size:20px">${esc(t.truth)}</td></tr>`).join('')}</table>
+      <div class="punch fade" style="animation-delay:3s">${S.superApproved} of ${S.pitchGroups.length} of your boards gave their CEO 99.7% of the votes. The real board did too.</div>`,
   paperBreak: () => `<div class="big-center"><div><div class="kicker">Activity #2 · Phones down</div><h1>You have $10 million</h1>
      <div class="rules">Activity #2 is on paper. Grab your group's packet.<br><b>Four disguised companies</b> · <b>split $10M</b> · <b>max $5M each</b><br>Use the lecture's Governance Deep Dive lenses. Keep this tab open: we'll be back for the final quiz.</div></div></div>`,
   profiles: () => `${titlebar('Activity #2 · You have $10 million', 'Four companies want your money', 'Names are hidden. Governance isn’t. Read them through the lecture’s Deep Dive lenses; investing opens next.')}
@@ -361,6 +460,12 @@ const views = {
   },
 };
 
+function liveRedraw(type) {
+  const m = $('#main');
+  m.classList.add('noanim');
+  m.innerHTML = views[type]();
+}
+
 const after = {
   vote: () => patch.vote(),
   invest: () => patch.invest(),
@@ -400,8 +505,14 @@ const patch = {
     const v = $('#voted'); if (v) v.textContent = `${S.quiz.answered} of ${S.players} answered`;
   },
   packetB: () => {}, packetA: () => {}, pitch: () => {}, profiles: () => {}, companyReveal: () => {},
-  boardReveal: () => {}, callback: () => {}, paperBreak: () => {}, portfolio: () => {}, quizIntro: () => {}, final: () => {},
+  boardReveal: () => {}, callback: () => {}, paperBreak: () => {}, pitchRules: () => {}, pitchTruth: () => {}, pitchStandings: () => {},
+  ceoAssign: () => liveRedraw('ceoAssign'), pitchRound: () => { if (S.round.stage !== 'reveal') liveRedraw('pitchRound'); }, superVote: () => { if (S.superVote.stage === 'decide') liveRedraw('superVote'); }, portfolio: () => {}, quizIntro: () => {}, final: () => {},
 };
+
+function fmt(n) { return (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n); }
+function cls(n) { return n > 0 ? 'pos' : n < 0 ? 'neg' : ''; }
+function kindName(k) { return { honest: 'Honest', exaggeration: 'Exaggeration', lie: 'Lie' }[k]; }
+function tokens(n) { let h = ''; for (let i = 0; i < C.verifyTokens; i++) h += `<span class="tok ${i < n ? '' : 'used'}"></span>`; return h; }
 
 function chips() {
   return S.hostView.names.map((n) => `<div class="chip ${n.online ? '' : 'off'}" data-n="${esc(n.name)}">${esc(n.name)}</div>`).join('');
