@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Theranos Game · Projector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#4dbfa8; --teal-d:#2f9b86; --teal-l:#e6f6f2;
+  --ink:#1d1d1f; --gray:#5f6163; --band:#bfbfbf; --line:#e3e3e3; --paper:#ffffff; --soft:#f4f4f4;
+  --red:#c8463c; --amber:#d99a2b; --slate:#4a5d7e; --rose:#b0466f;
+  --serif:'EB Garamond',Garamond,Georgia,serif; --sans:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(--serif);overflow:hidden}
+body{display:flex;flex-direction:column}
+.topline{height:10px;background:var(--teal)}
+header{background:var(--band);display:flex;align-items:center;gap:14px;padding:10px 24px;font-family:var(--sans)}
+.logo{font-family:var(--sans);font-weight:800;font-size:28px;letter-spacing:-1px;color:var(--gray);margin-right:12px}
+.logo i{display:inline-block;width:.72em;height:.72em;border-radius:50%;background:linear-gradient(180deg,#bfe9df,var(--teal-d));vertical-align:-.02em;margin:0 .02em}
+.tab{background:#f1f1f1;color:var(--ink);font-family:var(--serif);font-size:20px;padding:8px 22px;min-width:140px;text-align:center}
+.tab.on{background:var(--teal);color:#fff;font-weight:700}
+.join{margin-left:auto;display:flex;align-items:center;gap:12px;background:#fff;color:var(--ink);padding:6px 12px 6px 6px;font-family:var(--sans)}
+.join img{width:64px;height:64px;display:block}
+.join b{font-size:15px;display:block}
+.join small{font-size:13px;color:var(--gray)}
+main{flex:1;position:relative;padding:34px 56px 90px;overflow:hidden}
+h1{font-size:64px;line-height:1.02;font-weight:700}
+h2{font-size:46px;line-height:1.1;font-weight:700}
+.kicker{font-family:var(--sans);font-size:16px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-d);font-weight:700;margin-bottom:10px}
+.titlebar{border-left:10px solid var(--teal);padding-left:18px;margin-bottom:26px}
+.sub{font-size:24px;color:var(--gray);margin-top:6px}
+.controls{position:fixed;right:22px;bottom:18px;display:flex;gap:8px;align-items:center;font-family:var(--sans);opacity:.35;transition:opacity .2s}
+.controls:hover{opacity:1}
+.controls button{font:600 15px var(--sans);border:1px solid #ccc;background:#fff;padding:10px 16px;cursor:pointer}
+.controls button.primary{background:var(--teal);color:#fff;border-color:var(--teal)}
+.controls span{font-size:13px;color:var(--gray);margin-right:6px}
+.foot{position:fixed;left:56px;bottom:22px;font-family:var(--sans);font-size:15px;color:var(--gray)}
+.fade{animation:fade .5s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+/* lobby */
+.lobby{display:grid;grid-template-columns:auto 1fr;gap:56px;align-items:center;height:100%}
+.bigqr{background:#fff;border:3px solid var(--ink);padding:14px;width:min(46vh,420px)}
+.bigqr img{width:100%;display:block}
+.url{font-family:var(--sans);font-size:22px;font-weight:700;margin-top:14px;word-break:break-all}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;max-height:38vh;overflow:hidden}
+.chip{font-family:var(--sans);background:var(--teal-l);color:var(--teal-d);font-weight:600;padding:8px 14px;font-size:18px;animation:pop .35s ease both}
+.chip.off{opacity:.45}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+.count{font-family:var(--sans);font-size:96px;font-weight:800;color:var(--teal-d);line-height:1}
+/* memo */
+.memo{background:#fffdf7;border:1px solid #e6dfcc;box-shadow:0 18px 40px rgba(0,0,0,.08);padding:36px 48px;max-width:1150px;position:relative}
+.memo h2{font-size:42px}
+.memo .by{font-style:italic;color:var(--gray);font-size:21px;margin:6px 0 20px}
+.memo ul{list-style:none}
+.memo li{font-size:27px;line-height:1.3;padding:9px 0 9px 32px;position:relative;border-top:1px dashed #e6dfcc}
+.memo li:before{content:'';position:absolute;left:4px;top:21px;width:12px;height:12px;background:var(--teal);border-radius:50%}
+.stamp{position:absolute;right:34px;top:26px;font-family:var(--sans);font-weight:800;letter-spacing:.16em;font-size:20px;border:3px solid var(--teal-d);color:var(--teal-d);padding:6px 12px;transform:rotate(6deg)}
+.memo.leak{background:#fff8f6;border-color:#f0d3cd}
+.memo.leak .stamp{border-color:var(--red);color:var(--red);transform:rotate(-7deg)}
+.memo.leak li:before{background:var(--red)}
+.memo.leak li{border-top-color:#f0d3cd;opacity:0;animation:fade .45s ease forwards}
+/* vote */
+.motion{font-size:50px;line-height:1.15;font-weight:600;max-width:1300px}
+.bars{margin-top:40px;display:grid;gap:18px;max-width:1300px}
+.bar{display:grid;grid-template-columns:220px 1fr 90px;align-items:center;gap:18px;font-family:var(--sans)}
+.bar .lab{font-size:30px;font-weight:700}
+.bar .track{height:62px;background:var(--soft);position:relative;overflow:hidden}
+.bar .fill{position:absolute;inset:0 auto 0 0;background:var(--teal);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.bar.no .fill{background:var(--gray)}
+.bar.alt .fill{background:var(--amber)}
+.bar .n{font-size:34px;font-weight:800;text-align:right}
+.voted{font-family:var(--sans);font-size:20px;color:var(--gray);margin-top:26px}
+.concept{display:inline-block;font-family:var(--sans);font-size:17px;font-weight:700;color:#fff;background:#4b2e83;padding:5px 12px;margin-bottom:14px;letter-spacing:.02em}
+.concept:before{content:'LECTURE \00B7  ';opacity:.7;font-size:13px;letter-spacing:.12em}
+/* callback */
+.cb{display:grid;grid-template-columns:1fr 1.15fr;gap:56px;align-items:start}
+.cb .bars{margin-top:20px}
+.cb .bar{grid-template-columns:150px 1fr 70px}
+.cb .bar .lab{font-size:24px}.cb .bar .track{height:48px}.cb .bar .n{font-size:28px}
+.mechs{display:grid;gap:14px;margin-top:8px}
+.mech{border:1px solid var(--line);border-left:8px solid var(--red);padding:14px 18px;opacity:0;animation:fade .5s ease forwards}
+.mech h4{font-family:var(--sans);font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray)}
+.mech b{display:block;font-size:30px;margin:2px 0}
+.mech p{font-size:22px;line-height:1.3}
+/* pitch */
+body.dark{background:#0d0d0e;color:#f3f3f3}
+body.dark header{background:#2a2a2c}
+body.dark .tab{background:#3a3a3c;color:#ddd}
+body.dark .tab.on{background:var(--teal);color:#fff}
+.quote{font-size:48px;line-height:1.28;font-style:italic;max-width:1250px;margin-top:6vh}
+.quote:before{content:'\201C';font-size:180px;line-height:0;vertical-align:-.45em;color:var(--teal);margin-right:8px;font-style:normal}
+.attrib{font-family:var(--sans);font-size:22px;color:#aaa;margin-top:30px;letter-spacing:.06em}
+/* board reveal */
+.rtable{width:100%;border-collapse:collapse;font-size:24px}
+.rtable th{font-family:var(--sans);font-size:15px;text-transform:uppercase;letter-spacing:.1em;color:var(--gray);text-align:left;padding:8px 14px;border-bottom:2px solid var(--ink)}
+.rtable.small{font-size:21px}
+.rtable.small td{padding:10px 14px}
+.rtable td{padding:14px;border-bottom:1px solid var(--line);vertical-align:top}
+.rtable td.m{width:34%;font-weight:600}
+.rtable td.c{width:20%;font-family:var(--sans);font-size:20px}
+.rtable tr{opacity:0;animation:fade .5s ease forwards}
+.rtable tr.hot td{background:#fff3f1}
+.pill{display:inline-block;font-family:var(--sans);font-weight:700;font-size:15px;padding:3px 10px;background:var(--teal-l);color:var(--teal-d);margin-top:6px}
+.pill.bad{background:#fbe5e2;color:var(--red)}
+.punch{margin-top:24px;font-size:30px;font-weight:600;border-left:8px solid var(--red);padding:8px 18px;max-width:1300px}
+/* companies */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;height:calc(100% - 120px)}
+.card{border:1px solid var(--line);border-top:8px solid var(--teal);padding:18px 18px 14px;display:flex;flex-direction:column;background:#fff}
+.card .k{font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:.12em;color:var(--gray)}
+.card h3{font-size:36px;line-height:1.05;margin:2px 0}
+.card .sec{font-family:var(--sans);font-size:15px;color:var(--teal-d);font-weight:600;margin-bottom:8px}
+.card ul{list-style:none;font-size:19px;line-height:1.25}
+.card .story{font-size:20px;line-height:1.25;color:var(--gray);margin-bottom:6px;font-style:italic}
+.card .lens{padding:8px 0;border-top:1px solid var(--soft);font-size:20px;line-height:1.22}
+.card .lens small{display:block;font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4b2e83;margin-bottom:2px;font-size:12px}
+.card li{padding:6px 0;border-top:1px solid var(--soft)}
+.card .money{margin-top:auto;font-family:var(--sans);padding-top:10px}
+.card .money .track{height:14px;background:var(--soft);margin:6px 0}
+.card .money .fill{height:100%;background:var(--teal);transition:width .5s}
+.card .money b{font-size:26px}
+.card .money small{color:var(--gray);font-size:14px}
+/* company reveal */
+.reveal{display:grid;grid-template-columns:1.25fr 1fr;gap:56px;align-items:center;height:100%}
+.alias{font-family:var(--sans);font-size:24px;color:var(--gray);text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:3px}
+.ident{font-size:84px;line-height:1;font-weight:700;margin:6px 0 18px;animation:fade .6s .3s ease both}
+.outcome{font-size:30px;line-height:1.3;animation:fade .6s .7s ease both}
+.mult{font-family:var(--sans);font-weight:800;font-size:200px;line-height:1;text-align:center;animation:pop .5s 1.1s ease both}
+.mult.zero{color:var(--red)}
+.mult.win{color:var(--teal-d)}
+.mlab{font-family:var(--sans);text-align:center;font-size:20px;color:var(--gray);letter-spacing:.1em;text-transform:uppercase}
+.classv{margin-top:28px;font-family:var(--sans);text-align:center;font-size:22px;animation:fade .5s 1.5s ease both}
+.classv b{font-size:40px;display:block}
+/* leaderboard */
+.board{display:grid;gap:10px;max-width:1300px}
+.row{display:grid;grid-template-columns:60px 1fr 160px;align-items:center;gap:16px;font-family:var(--sans);opacity:0;animation:fade .45s ease forwards}
+.row .r{font-size:26px;font-weight:800;color:var(--gray)}
+.row .nm{position:relative;height:50px;background:var(--soft)}
+.row .nm .fill{position:absolute;inset:0 auto 0 0;background:var(--teal-l)}
+.row .nm span{position:relative;z-index:1;line-height:50px;padding-left:16px;font-size:24px;font-weight:700}
+.row .nm em{font-style:normal;font-weight:400;color:var(--gray);font-size:17px;margin-left:10px}
+.row .v{font-size:28px;font-weight:800;text-align:right}
+.row.top .r{color:var(--teal-d)}
+/* quiz */
+.qhead{display:flex;align-items:center;gap:30px}
+.timer{width:120px;height:120px;flex:none;position:relative}
+.timer svg{transform:rotate(-90deg)}
+.timer b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--sans);font-size:44px;font-weight:800}
+.qtext{font-size:48px;line-height:1.15;font-weight:600}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px}
+.opt{display:flex;align-items:center;gap:18px;color:#fff;font-family:var(--sans);font-size:28px;font-weight:700;padding:24px 26px;min-height:104px;transition:opacity .3s,transform .3s}
+.opt .sh{font-size:30px;width:34px;text-align:center}
+.opt .cnt{margin-left:auto;font-size:34px}
+.o0{background:var(--teal-d)}.o1{background:var(--slate)}.o2{background:var(--amber)}.o3{background:var(--rose)}
+.opts.done .opt{opacity:.28}
+.opts.done .opt.right{opacity:1;transform:scale(1.03);box-shadow:0 0 0 6px var(--ink)}
+.qside{display:grid;grid-template-columns:1fr 380px;gap:40px}
+.mini h4{font-family:var(--sans);font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-bottom:10px}
+.mini .row{grid-template-columns:34px 1fr 90px}
+.mini .row .nm,.mini .row .nm span{height:42px;line-height:42px;font-size:19px}
+.mini .row .v{font-size:20px}
+/* final */
+.final{display:grid;grid-template-columns:1.2fr 1fr;gap:56px}
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:end;gap:14px;height:340px;margin:20px 0 26px}
+.pod{text-align:center;font-family:var(--sans)}
+.pod .blk{background:var(--teal);color:#fff;font-size:54px;font-weight:800;display:grid;place-items:center;animation:rise .8s ease both}
+.pod:nth-child(1) .blk{height:200px;background:var(--gray)}
+.pod:nth-child(2) .blk{height:270px}
+.pod:nth-child(3) .blk{height:150px;background:#9a9c9e}
+.pod .who{font-size:26px;font-weight:800;margin-bottom:6px}
+.pod .pts{font-size:18px;color:var(--gray);margin-bottom:8px}
+@keyframes rise{from{transform:scaleY(0);transform-origin:bottom}to{transform:scaleY(1);transform-origin:bottom}}
+.big-center{display:grid;place-items:center;height:100%;text-align:center}
+.rules{font-family:var(--sans);font-size:26px;line-height:1.6;margin-top:24px;color:var(--gray)}
+.rules b{color:var(--ink)}
+.login{max-width:520px;margin:12vh auto;font-family:var(--sans)}
+.login input{font-size:22px;padding:12px;width:100%;margin:14px 0;border:2px solid var(--ink)}
+.login button{font:700 20px var(--sans);padding:12px 22px;background:var(--teal);color:#fff;border:0}
+</style>
+</head>
+<body>
+<div class="topline"></div>
+<header>
+  <div class="logo">theran<i></i>s</div>
+  <div id="tabs" style="display:flex;gap:10px"></div>
+  <div class="join" id="joinChip" hidden>
+    <img id="miniQr" alt="Join QR code">
+    <div><b id="miniUrl"></b><small><span id="online">0</span> players</small></div>
+  </div>
+</header>
+<main id="main"></main>
+<div class="foot" id="foot"></div>
+<div class="controls" id="controls" hidden>
+  <span id="pos"></span>
+  <button id="back" title="Back (←)">◀ Back</button>
+  <button id="next" class="primary" title="Next (→ or Space)">Next ▶</button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const socket = io();
+let C = null, S = null, offset = 0, joinUrl = '', lastPhase = null, tick = null;
+const shapes = ['▲', '◆', '●', '■'];
+
+const key = new URLSearchParams(location.search).get('key') || localStorage.getItem('hostKey') || '';
+fetch('/content.json').then((r) => r.json()).then((c) => { C = c; if (S) render(); });
+fetch('/join-url').then((r) => r.json()).then((j) => {
+  joinUrl = j.url;
+  $('#miniUrl').textContent = j.url.replace(/^https?:\/\//, '');
+  $('#miniQr').src = '/qr.svg?' + Date.now();
+});
+
+function auth(k) {
+  socket.emit('host:auth', k, (res) => {
+    if (res && res.ok) { try { localStorage.setItem('hostKey', k); } catch (e) {} $('#controls').hidden = false; }
+    else loginScreen();
+  });
+}
+function loginScreen() {
+  $('#main').innerHTML = `<div class="login"><div class="kicker">Presenter only</div><h2>Enter host key</h2>
+    <input id="k" type="password" placeholder="Host key"><button id="go">Start</button></div>`;
+  $('#go').onclick = () => auth($('#k').value);
+}
+socket.on('connect', () => auth(key));
+socket.on('state', (s) => { offset = s.now - Date.now(); S = s; if (C) render(); });
+
+$('#next').onclick = () => socket.emit('host:next');
+$('#back').onclick = () => socket.emit('host:back');
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); socket.emit('host:next'); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); socket.emit('host:back'); }
+  if (e.key === 'R' && e.shiftKey && confirm('Reset the whole game? Everyone will need to rejoin.')) socket.emit('host:reset');
+});
+
+function tabs() {
+  $('#tabs').innerHTML = S.sections.filter((x) => x !== 'Join').map((x) =>
+    `<div class="tab ${x === S.phase.section ? 'on' : ''}">${esc(x)}</div>`).join('');
+}
+const titlebar = (kicker, title, sub) => `<div class="titlebar fade"><div class="kicker">${esc(kicker)}</div><h2>${title}</h2>${sub ? `<div class="sub">${sub}</div>` : ''}</div>`;
+const pct = (n, total) => total ? Math.round((n / total) * 100) : 0;
+
+function render() {
+  const ph = S.phase;
+  const changed = lastPhase !== ph.id;
+  lastPhase = ph.id;
+  tabs();
+  document.body.classList.toggle('dark', ph.type === 'pitch');
+  $('#joinChip').hidden = ph.type === 'lobby';
+  $('#online').textContent = S.online;
+  $('#pos').textContent = `${S.phaseIndex + 1} / ${S.phaseCount}`;
+  $('#foot').textContent = '';
+  const fn = views[ph.type];
+  // Live-updating screens patch in place so animations don't restart on every vote.
+  if (!changed && patch[ph.type]) return patch[ph.type]();
+  clearInterval(tick);
+  $('#main').innerHTML = fn ? fn() : '';
+  after[ph.type] && after[ph.type]();
+}
+
+const views = {
+  lobby: () => `<div class="lobby">
+      <div><div class="bigqr"><img src="/qr.svg?${Date.now()}" alt="Scan to join"></div>
+        <div class="url">${esc(joinUrl.replace(/^https?:\/\//, ''))}</div></div>
+      <div><div class="kicker">Governance at Theranos</div>
+        <h1>Scan to join<br>the boardroom</h1>
+        <div class="sub" style="margin-top:14px">Use your phone camera. Pick a name and your group.</div>
+        <div style="display:flex;align-items:baseline;gap:16px;margin-top:30px"><div class="count" id="cnt">${S.players}</div><div class="sub">players in</div></div>
+        <div class="chips" id="chips">${chips()}</div></div></div>`,
+  packetA: () => `${titlebar('Activity #1 · You are the board', 'Read the CEO’s board report', 'Then vote on three motions from your phone.')}
+    <div class="memo fade"><div class="stamp">CONFIDENTIAL</div><h2>${esc(C.packetA.title)}</h2><div class="by">${esc(C.packetA.byline)}</div>
+    <ul>${C.packetA.points.map((p) => `<li>${esc(p)}</li>`).join('')}</ul></div>`,
+  vote: () => {
+    const m = S.motion;
+    const head = m.warmup ? titlebar('Warm-up from lecture', 'Would you invest?', 'Answer from your gut. No points for this one.') : titlebar('Activity #1 · ' + m.title, '', '');
+    return `${head}${m.warmup ? '' : `<div class="concept fade">${esc(m.concept)}</div>`}
+      <div class="motion fade">${esc(m.text)}</div>
+      <div class="bars" id="bars">${bars()}</div>
+      <div class="voted" id="voted"></div>`;
+  },
+  pitch: () => `<div class="kicker" style="color:var(--teal)">Activity #1 · The CEO asks for your trust</div>
+     <div class="quote fade">${esc(C.pitch)}</div><div class="attrib fade">— ELIZABETH HOLMES, CEO</div>`,
+  packetB: () => `${titlebar('Activity #1 · New information', 'This just reached the board', 'Read it. Then decide: is she still your CEO?')}
+     <div class="memo leak"><div class="stamp">LEAKED</div><h2>${esc(C.packetB.title)}</h2><div style="height:12px"></div>
+     <ul>${C.packetB.points.map((p, i) => `<li style="animation-delay:${0.25 + i * 0.55}s">${esc(p)}</li>`).join('')}</ul></div>`,
+  boardReveal: () => {
+    const rows = S.board.map((m, i) => {
+      const total = Object.values(m.tally).reduce((a, b) => a + b, 0);
+      const top = Object.entries(m.tally).sort((a, b) => b[1] - a[1])[0];
+      const classTxt = total ? `${esc(top[0])} <b>${pct(top[1], total)}%</b>` : 'No votes';
+      const sound = m.sound.length ? `<div class="pill">+250 pts for ${esc(m.sound.join(' / '))}</div>` : `<div class="pill" style="background:#eee;color:#666">Judgment call</div>`;
+      return `<tr class="${m.id === 'm3' ? 'hot' : ''}" style="animation-delay:${0.2 + i * 0.5}s"><td class="m">${esc(m.title)}: ${esc(m.text)}<br><div class="pill" style="background:#ece6f5;color:#4b2e83">${esc(m.concept)}</div></td>
+        <td class="c">${classTxt}</td><td>${esc(m.real)}<br>${sound}</td></tr>`;
+    }).join('');
+    return `${titlebar('Activity #1 · The reveal', 'What the real board did', '')}
+      <table class="rtable small"><tr><th>Motion</th><th>This class</th><th>The real Theranos board</th></tr>${rows}</table>
+      <div class="punch fade" style="animation-delay:3s">Once Motion 3 passed, Motion 5 didn't matter: she controlled the votes that elect the board.</div>`;
+  },
+  callback: () => {
+    const w = S.warmup;
+    const total = Object.values(w.tally).reduce((a, b) => a + b, 0);
+    const noPct = pct(w.tally['No'] || 0, total);
+    const mech = [
+      ['Board of directors', 'Famous, but not effective', 'Outsiders with no lab-medicine expertise, recruited by the CEO, who could not verify the technology.'],
+      ['Shareholder activism', 'Switched off', 'With 99.7% of the votes held by the CEO, other shareholders’ proxy votes meant nothing.'],
+      ['Rewards and incentives', 'No real threat', 'Dismissal was never realistic: the CEO controlled the votes that elect the board.'],
+    ];
+    return `${titlebar('Activity #1 · Back to lecture', 'All three governance mechanisms failed', '')}
+      <div class="cb"><div><div class="kicker">Your warm-up vote</div>
+        <div style="font-size:24px;line-height:1.3">${esc(w.text)}</div>
+        <div class="bars">${w.options.map((o, i) => `<div class="bar ${['', 'no', 'alt'][i]}"><div class="lab">${esc(o)}</div><div class="track"><div class="fill" style="width:${pct(w.tally[o], total)}%"></div></div><div class="n">${w.tally[o]}</div></div>`).join('')}</div>
+        <div class="punch" style="font-size:24px;border-color:#4b2e83">${noPct}% of you wouldn’t invest in that company. But Theranos’s board was famous outsiders, not insiders, and it still failed: independence on paper isn’t oversight.</div></div>
+      <div class="mechs">${mech.map((m, i) => `<div class="mech" style="animation-delay:${0.4 + i * 0.7}s"><h4>${m[0]}</h4><b>${m[1]}</b><p>${m[2]}</p></div>`).join('')}</div></div>`;
+  },
+  profiles: () => `${titlebar('Activity #2 · You have $10 million', 'Four companies want your money', 'Names are hidden. Governance isn’t. Read them through the lecture’s Deep Dive lenses; investing opens next.')}
+     <div class="cards">${C.companyOrder.map((k) => card(k, false)).join('')}</div>`,
+  invest: () => `${titlebar('Activity #2 · Invest now', 'Split $10M on your phone', 'Max $5M per company · <span id="sub">0</span> of ' + S.players + ' portfolios in')}
+     <div class="cards">${C.companyOrder.map((k) => card(k, true)).join('')}</div>`,
+  companyReveal: () => {
+    const c = S.company;
+    const cls = c.multiplier === 0 ? 'zero' : 'win';
+    return `<div class="reveal">
+      <div><div class="kicker">Activity #2 · Company ${esc(c.key)} revealed</div>
+        <div class="alias">${esc(c.alias)}</div><div class="ident">${esc(c.identity)}</div>
+        <div class="outcome">${esc(c.outcome)}</div></div>
+      <div><div class="mult ${cls}">×${c.multiplier}</div><div class="mlab">Your money</div>
+        <div class="classv">The class invested <b>$${S.totals[c.key]}M → <span id="cv">$0M</span></b></div></div></div>`;
+  },
+  portfolio: () => {
+    const max = Math.max(1, ...S.leaders.map((l) => l.value));
+    return `${titlebar('Activity #2 · Results', 'Top investors', 'Portfolio value after 4 reveals')}
+      <div class="board">${S.leaders.map((l, i) => lrow(i + 1, l.name, l.group, '$' + l.value + 'M', l.value / max, i)).join('') || '<div class="sub">No portfolios submitted.</div>'}</div>`;
+  },
+  quizIntro: () => `<div class="big-center"><div><div class="kicker">Final round</div><h1>Lightning quiz</h1>
+     <div class="rules"><b>${C.quizCount} questions</b> · <b>${C.scoring.quizSeconds} seconds</b> each<br>Right answers score <b>${C.scoring.quizBase}–${C.scoring.quizMax}</b>: faster is worth more<br>Your board votes and portfolio already count toward your total</div></div></div>`,
+  quiz: () => {
+    const q = S.quiz;
+    const opts = q.options.map((o, i) => `<div class="opt o${i} ${q.revealed && i === q.correct ? 'right' : ''}"><span class="sh">${shapes[i]}</span>${esc(o)}${q.revealed ? `<span class="cnt">${q.dist[i]}</span>` : ''}</div>`).join('');
+    const head = `<div class="qhead"><div class="timer" id="timer">${timerSvg(1)}<b id="secs">${q.seconds}</b></div>
+       <div><div class="kicker">Question ${q.number} of ${q.total}</div><div class="qtext">${esc(q.question)}</div></div></div>`;
+    if (!q.revealed) return `${head}<div class="opts">${opts}</div><div class="voted" id="voted"></div>`;
+    const max = Math.max(1, ...S.leaders.map((l) => l.total));
+    return `<div class="qside"><div>${head}<div class="opts done">${opts}</div></div>
+       <div class="mini"><h4>Leaderboard</h4><div class="board">${S.leaders.map((l, i) => lrow(i + 1, l.name, '', l.total.toLocaleString(), l.total / max, i)).join('')}</div></div></div>`;
+  },
+  final: () => {
+    const L = S.leaders;
+    const pod = [L[1], L[0], L[2]].map((l, i) => l ? `<div class="pod"><div class="who">${esc(l.name)}</div><div class="pts">${l.total.toLocaleString()} pts</div><div class="blk">${[2, 1, 3][i]}</div></div>` : '<div class="pod"></div>').join('');
+    const maxT = Math.max(1, ...S.teams.map((t) => t.avg));
+    return `<div class="final"><div>${titlebar('Results', 'Champions of the boardroom', '')}<div class="podium">${pod}</div>
+        <div class="board">${L.slice(3, 8).map((l, i) => lrow(i + 4, l.name, l.group, l.total.toLocaleString(), 0, i)).join('')}</div></div>
+      <div style="padding-top:20px"><div class="kicker">Team standings (average score)</div>
+        <div class="board" style="margin-top:12px">${S.teams.map((t, i) => lrow(i + 1, t.group, t.n + ' players', t.avg.toLocaleString(), t.avg / maxT, i)).join('') || '<div class="sub">No groups chosen.</div>'}</div>
+        <div class="punch" style="border-color:var(--teal);margin-top:40px;font-size:26px">Board, shareholders, incentives: Theranos switched off all three mechanisms. A board is only as strong as the information it can get without asking the CEO.</div></div></div>`;
+  },
+};
+
+const after = {
+  vote: () => patch.vote(),
+  invest: () => patch.invest(),
+  quiz: () => startTimer(),
+  companyReveal: () => countUp($('#cv'), S.company.classValue, 1700),
+};
+const patch = {
+  lobby: () => {
+    $('#cnt').textContent = S.players;
+    const existing = new Set([...document.querySelectorAll('#chips .chip')].map((c) => c.dataset.n));
+    const names = S.hostView.names;
+    if (names.length !== existing.size || names.some((n) => !existing.has(n.name))) $('#chips').innerHTML = chips();
+    else names.forEach((n) => { const el = document.querySelector(`#chips .chip[data-n="${CSS.escape(n.name)}"]`); el && el.classList.toggle('off', !n.online); });
+  },
+  vote: () => {
+    const total = S.voted;
+    S.motion.options.forEach((o) => {
+      const el = document.querySelector(`.bar[data-o="${CSS.escape(o)}"]`);
+      if (!el) return;
+      el.querySelector('.fill').style.width = pct(S.tally[o], total) + '%';
+      el.querySelector('.n').textContent = S.tally[o];
+    });
+    $('#voted').textContent = `${total} of ${S.players} voted · You can change your vote until we move on`;
+  },
+  invest: () => {
+    const max = 10 * Math.max(1, S.submitted) / 2;
+    C.companyOrder.forEach((k) => {
+      const el = document.querySelector(`.card[data-k="${k}"]`);
+      if (!el) return;
+      el.querySelector('.fill').style.width = Math.min(100, (S.totals[k] / max) * 100) + '%';
+      el.querySelector('b').textContent = '$' + S.totals[k] + 'M';
+    });
+    $('#sub').textContent = S.submitted;
+  },
+  quiz: () => {
+    if (S.quiz.revealed && !document.querySelector('.opts.done')) { clearInterval(tick); $('#main').innerHTML = views.quiz(); startTimer(); return; }
+    const v = $('#voted'); if (v) v.textContent = `${S.quiz.answered} of ${S.players} answered`;
+  },
+  packetB: () => {}, packetA: () => {}, pitch: () => {}, profiles: () => {}, companyReveal: () => {},
+  boardReveal: () => {}, callback: () => {}, portfolio: () => {}, quizIntro: () => {}, final: () => {},
+};
+
+function chips() {
+  return S.hostView.names.map((n) => `<div class="chip ${n.online ? '' : 'off'}" data-n="${esc(n.name)}">${esc(n.name)}</div>`).join('');
+}
+function bars() {
+  return S.motion.options.map((o, i) => `<div class="bar ${['', 'no', 'alt'][i] || ''}" data-o="${esc(o)}"><div class="lab">${esc(o)}</div><div class="track"><div class="fill" style="width:0"></div></div><div class="n">0</div></div>`).join('');
+}
+function card(k, money) {
+  const c = C.companies[k];
+  return `<div class="card fade" data-k="${k}" style="animation-delay:${C.companyOrder.indexOf(k) * 0.12}s"><div class="k">COMPANY ${k}</div><h3>${esc(c.alias)}</h3><div class="sec">${esc(c.sector)}</div>
+    <div class="story">${esc(c.story)}</div>
+    ${C.lenses.map((l) => `<div class="lens"><small>${esc(l)}</small>${esc(c.lens[l])}</div>`).join('')}
+    ${money ? `<div class="money"><small>Class total</small><div class="track"><div class="fill" style="width:0"></div></div><b>$0M</b></div>` : ''}</div>`;
+}
+function lrow(rank, name, sub, val, frac, i) {
+  return `<div class="row ${rank <= 3 ? 'top' : ''}" style="animation-delay:${i * 0.08}s"><div class="r">${rank}</div>
+    <div class="nm"><div class="fill" style="width:${Math.round(frac * 100)}%"></div><span>${esc(name)}${sub ? `<em>${esc(sub)}</em>` : ''}</span></div><div class="v">${esc(val)}</div></div>`;
+}
+function timerSvg(frac) {
+  const r = 52, c = 2 * Math.PI * r;
+  return `<svg width="120" height="120"><circle cx="60" cy="60" r="${r}" fill="none" stroke="#e5e5e5" stroke-width="12"/>
+    <circle id="arc" cx="60" cy="60" r="${r}" fill="none" stroke="var(--teal-d)" stroke-width="12" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - frac)}"/></svg>`;
+}
+function startTimer() {
+  const q = S.quiz;
+  const arc = $('#arc'), secs = $('#secs');
+  const c = 2 * Math.PI * 52;
+  const step = () => {
+    const left = Math.max(0, q.start + q.seconds * 1000 - (Date.now() + offset));
+    const frac = left / (q.seconds * 1000);
+    if (arc) { arc.style.strokeDashoffset = c * (1 - frac); arc.style.stroke = frac < 0.25 ? 'var(--red)' : 'var(--teal-d)'; }
+    if (secs) secs.textContent = q.revealed ? '✓' : Math.ceil(left / 1000);
+    if (!left && !q.revealed) { const v = $('#voted'); if (v) v.textContent = `Time's up · ${S.quiz.answered} answered · press Next to reveal`; clearInterval(tick); }
+  };
+  step();
+  if (!q.revealed) tick = setInterval(step, 100);
+}
+function countUp(el, to, ms) {
+  if (!el) return;
+  const t0 = performance.now() + 1500;
+  const f = (t) => {
+    const p = Math.max(0, Math.min(1, (t - t0) / ms));
+    el.textContent = '$' + Math.round(to * (1 - Math.pow(1 - p, 3))) + 'M';
+    if (p < 1) requestAnimationFrame(f);
+  };
+  requestAnimationFrame(f);
+}
+</script>
+</body>
+</html>
