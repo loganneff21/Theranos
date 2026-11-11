@@ -199,6 +199,7 @@ const V = {
     <div class="box"><b>Board of directors</b><p>Famous outsiders, no lab expertise, couldn’t verify the technology.</p></div>
     <div class="box"><b>Shareholder activism</b><p>The CEO held 99.7% of the votes; proxy votes meant nothing.</p></div>
     <div class="box"><b>Rewards and incentives</b><p>Dismissal was never a realistic threat.</p></div>`,
+  paperBreak: () => wait('Phones down for Activity #2', 'It’s on paper with your group. Keep this page open; the final quiz comes back here.'),
   profiles: () => `<div class="kicker">Activity #2 · You have $10M</div><h2>Study the four companies</h2><p>Investing opens next. Names are disguised; judge them with the lecture’s Deep Dive lenses.</p>
     ${C.companyOrder.map((k) => coCard(k, false)).join('')}`,
   invest: () => {
@@ -242,7 +243,7 @@ const V = {
     const s = S.me.score;
     return `<div class="center" style="padding-top:4vh"><div class="kicker">Final results</div><h2>You finished</h2>
       <div class="big">#${S.me.rank}</div><p>of ${S.me.of} players</p>
-      <div class="box breakdown"><span>Board votes</span><b>${s.votes}</b><span>Portfolio</span><b>${s.portfolio}</b><span>Quiz</span><b>${s.quiz}</b>
+      <div class="box breakdown"><span>Board votes</span><b>${s.votes}</b>${C.activity2OnPhones ? `<span>Portfolio</span><b>${s.portfolio}</b>` : ''}<span>Quiz</span><b>${s.quiz}</b>
       <span style="font-weight:800;color:var(--ink)">Total</span><b>${s.total.toLocaleString()}</b></div></div>`;
   },
 };

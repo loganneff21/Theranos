@@ -316,6 +316,8 @@ const views = {
         <div class="punch" style="font-size:24px;border-color:#4b2e83">${noPct}% of you wouldn’t invest in that company. But Theranos’s board was famous outsiders, not insiders, and it still failed: independence on paper isn’t oversight.</div></div>
       <div class="mechs">${mech.map((m, i) => `<div class="mech" style="animation-delay:${0.4 + i * 0.7}s"><h4>${m[0]}</h4><b>${m[1]}</b><p>${m[2]}</p></div>`).join('')}</div></div>`;
   },
+  paperBreak: () => `<div class="big-center"><div><div class="kicker">Activity #2 · Phones down</div><h1>You have $10 million</h1>
+     <div class="rules">Activity #2 is on paper. Grab your group's packet.<br><b>Four disguised companies</b> · <b>split $10M</b> · <b>max $5M each</b><br>Use the lecture's Governance Deep Dive lenses. Keep this tab open: we'll be back for the final quiz.</div></div></div>`,
   profiles: () => `${titlebar('Activity #2 · You have $10 million', 'Four companies want your money', 'Names are hidden. Governance isn’t. Read them through the lecture’s Deep Dive lenses; investing opens next.')}
      <div class="cards">${C.companyOrder.map((k) => card(k, false)).join('')}</div>`,
   invest: () => `${titlebar('Activity #2 · Invest now', 'Split $10M on your phone', 'Max $5M per company · <span id="sub">0</span> of ' + S.players + ' portfolios in')}
@@ -336,7 +338,7 @@ const views = {
       <div class="board">${S.leaders.map((l, i) => lrow(i + 1, l.name, l.group, '$' + l.value + 'M', l.value / max, i)).join('') || '<div class="sub">No portfolios submitted.</div>'}</div>`;
   },
   quizIntro: () => `<div class="big-center"><div><div class="kicker">Final round</div><h1>Lightning quiz</h1>
-     <div class="rules"><b>${C.quizCount} questions</b> · <b>${C.scoring.quizSeconds} seconds</b> each<br>Right answers score <b>${C.scoring.quizBase}–${C.scoring.quizMax}</b>: faster is worth more<br>Your board votes and portfolio already count toward your total</div></div></div>`,
+     <div class="rules"><b>${C.quizCount} questions</b> · <b>${C.scoring.quizSeconds} seconds</b> each<br>Right answers score <b>${C.scoring.quizBase}–${C.scoring.quizMax}</b>: faster is worth more<br>Your board votes already count toward your total</div></div></div>`,
   quiz: () => {
     const q = S.quiz;
     const opts = q.options.map((o, i) => `<div class="opt o${i} ${q.revealed && i === q.correct ? 'right' : ''}"><span class="sh">${shapes[i]}</span>${esc(o)}${q.revealed ? `<span class="cnt">${q.dist[i]}</span>` : ''}</div>`).join('');
@@ -398,7 +400,7 @@ const patch = {
     const v = $('#voted'); if (v) v.textContent = `${S.quiz.answered} of ${S.players} answered`;
   },
   packetB: () => {}, packetA: () => {}, pitch: () => {}, profiles: () => {}, companyReveal: () => {},
-  boardReveal: () => {}, callback: () => {}, portfolio: () => {}, quizIntro: () => {}, final: () => {},
+  boardReveal: () => {}, callback: () => {}, paperBreak: () => {}, portfolio: () => {}, quizIntro: () => {}, final: () => {},
 };
 
 function chips() {
