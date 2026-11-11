@@ -179,19 +179,82 @@ const ACTIVITY2_ON_PHONES = false;
 
 const groups = ['Board 1', 'Board 2', 'Board 3', 'Board 4', 'Board 5', 'Board 6'];
 
+
+// ---------------- Activity #1: The Pitch (CEO vs. board) ----------------
+// Real claims Theranos executives made to investors and partners, from the SEC's 2018 complaint
+// against Holmes and Balwani (allegations; both were later convicted of fraud in criminal trials).
+// None of these are in the IMD case, so students can't know the answers from the reading.
+const pitchRounds = [
+  {
+    topic: 'Military',
+    cards: [
+      { kind: 'honest', text: 'The Department of Defense has used our technology in a burn study.' },
+      { kind: 'exaggeration', text: 'We have Defense Department contracts that will bring in future revenue.' },
+      { kind: 'lie', text: 'Our technology is deployed on the battlefield in Afghanistan and on medevac helicopters.' },
+    ],
+    truth: 'It was used in one Defense Department burn study, never on the battlefield or medevac helicopters. Theranos earned about $300,000 from three Defense contracts over four years.',
+  },
+  {
+    topic: 'Revenue',
+    cards: [
+      { kind: 'honest', text: 'We are losing about $8–9 million a month right now.' },
+      { kind: 'exaggeration', text: 'Most of our revenue comes from the military.' },
+      { kind: 'lie', text: 'We will book over $100 million in revenue this year.' },
+    ],
+    truth: 'Investor binders projected over $100 million in 2014 revenue. Theranos actually brought in a little more than $100,000.',
+  },
+  {
+    topic: 'Retail rollout',
+    cards: [
+      { kind: 'honest', text: 'We are in talks with our pharmacy partner about a rollout.' },
+      { kind: 'exaggeration', text: 'We will roll out to hundreds of pharmacy stores next year.' },
+      { kind: 'lie', text: 'A major grocery chain is launching us in 100+ stores in January.' },
+    ],
+    truth: 'The pharmacy rollout had quietly been cut from 500 stores to 200, and the grocery partnership had stalled; the companies had stopped talking.',
+  },
+  {
+    topic: 'Regulation',
+    cards: [
+      { kind: 'honest', text: 'The FDA has told us we need its clearance for our device.' },
+      { kind: 'exaggeration', text: 'We are working with the FDA on a submission.' },
+      { kind: 'lie', text: 'FDA approval is voluntary for us; we are only applying as a courtesy.' },
+    ],
+    truth: 'FDA representatives told Theranos clearance or approval was necessary, while executives kept telling investors it was voluntary.',
+  },
+];
+
+const kindLabel = { honest: 'Honest', exaggeration: 'Exaggeration', lie: 'Lie' };
+
+// [CEO points, board points] for each card kind and board decision.
+const pitchPoints = {
+  honest: { believe: [1, 1], challenge: [1, -1] },
+  exaggeration: { believe: [2, -1], challenge: [-2, 1] },
+  lie: { believe: [3, -2], challenge: [-3, 2] },
+};
+const verifyTokens = 2; // per board, for the whole game
+const pointsScale = 100; // pitch points x 100 go on each player's game total
+
+const superMotion = {
+  text: 'Your CEO proposes 100 votes for every share she owns: about 99.7% of all voting rights.',
+  approve: { ceo: 2, board: -1, effect: 'The CEO can no longer lose points for getting caught.' },
+  reject: { ceo: 0, board: 1 },
+  real: 'The real Theranos board approved it. After that, the board could not hold Holmes accountable: she controlled the votes that elect the board.',
+};
+
 // The run of show. The host's Next button walks this list.
 const phases = [
   { id: 'lobby', type: 'lobby', section: 'Join' },
   { id: 'w0', type: 'vote', motion: 0, section: 'Activity #1' },
-  { id: 'packetA', type: 'packetA', section: 'Activity #1' },
-  { id: 'm1', type: 'vote', motion: 1, section: 'Activity #1' },
-  { id: 'm2', type: 'vote', motion: 2, section: 'Activity #1' },
-  { id: 'm3', type: 'vote', motion: 3, section: 'Activity #1' },
-  { id: 'm4', type: 'vote', motion: 4, section: 'Activity #1' },
-  { id: 'pitch', type: 'pitch', section: 'Activity #1' },
-  { id: 'packetB', type: 'packetB', section: 'Activity #1' },
-  { id: 'm5', type: 'vote', motion: 5, section: 'Activity #1' },
-  { id: 'boardReveal', type: 'boardReveal', section: 'Activity #1' },
+  // Activity #1: "The Pitch" (CEO vs. board). The old five-motion version is kept in git history.
+  { id: 'rules', type: 'pitchRules', section: 'Activity #1' },
+  { id: 'ceos', type: 'ceoAssign', section: 'Activity #1' },
+  { id: 'r1', type: 'pitchRound', round: 0, section: 'Activity #1' },
+  { id: 'r2', type: 'pitchRound', round: 1, section: 'Activity #1' },
+  { id: 'super', type: 'superVote', section: 'Activity #1' },
+  { id: 'r3', type: 'pitchRound', round: 2, section: 'Activity #1' },
+  { id: 'r4', type: 'pitchRound', round: 3, section: 'Activity #1' },
+  { id: 'standings', type: 'pitchStandings', section: 'Activity #1' },
+  { id: 'truth', type: 'pitchTruth', section: 'Activity #1' },
   { id: 'callback', type: 'callback', section: 'Activity #1' },
   // Activity #2 runs on paper in class. Set ACTIVITY2_ON_PHONES to true to play it on phones instead.
   ...(ACTIVITY2_ON_PHONES
@@ -207,4 +270,4 @@ const phases = [
   { id: 'final', type: 'final', section: 'Results' },
 ];
 
-module.exports = { ACTIVITY2_ON_PHONES, motions, packetA, pitch, packetB, lenses, companies, companyOrder, revealOrder, quiz, scoring, groups, phases };
+module.exports = { ACTIVITY2_ON_PHONES, pitchRounds, kindLabel, pitchPoints, verifyTokens, pointsScale, superMotion, motions, packetA, pitch, packetB, lenses, companies, companyOrder, revealOrder, quiz, scoring, groups, phases };

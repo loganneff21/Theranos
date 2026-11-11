@@ -5,6 +5,8 @@ const crypto = require('crypto');
 const { Server } = require('socket.io');
 const QRCode = require('qrcode');
 const C = require('./content');
+const P = require('./pitch');
+const PITCH_TYPES = ['pitchRules', 'ceoAssign', 'pitchRound', 'superVote', 'pitchStandings', 'pitchTruth', 'callback'];
 
 const PORT = process.env.PORT || 3000;
 const HOST_KEY = process.env.HOST_KEY || 'theranos';
@@ -41,6 +43,7 @@ function freshGame() {
     maxPhase: 0,
     players: new Map(), // pid -> player
     quizState: {}, // qIndex -> { start, revealed }
+    pitch: P.freshPitch(),
   };
 }
 game = freshGame();
@@ -55,16 +58,19 @@ function newPlayer(pid, name, group) {
   return { pid, name, group, votes: {}, alloc: null, answers: {}, sockets: new Set(), joinedAt: Date.now() };
 }
 
+function smallestGroup() {
+  const counts = Object.fromEntries(C.groups.map((g) => [g, 0]));
+  game.players.forEach((p) => p.group && counts[p.group]++);
+  return C.groups.reduce((a, b) => (counts[b] < counts[a] ? b : a));
+}
+
 function cleanName(s) {
   return String(s || '').replace(/[<>]/g, '').trim().slice(0, 18) || 'Player';
 }
 
+// Activity #1 points come from the pitch game (CEO or board score for the player's group).
 function votePoints(p) {
-  let pts = 0;
-  C.motions.forEach((m) => {
-    if (reached('boardReveal') && m.sound.includes(p.votes[m.id])) pts += C.scoring.soundVote;
-  });
-  return pts;
+  return P.playerPoints(game, p);
 }
 
 function revealedCompanies() {
@@ -193,6 +199,7 @@ function publicState() {
     const w = C.motions.find((m) => m.warmup);
     s.warmup = { text: w.text, options: w.options, tally: tallies()[w.id] };
   }
+  if (PITCH_TYPES.includes(ph.type)) Object.assign(s, P.publicView(game, ph));
   if (ph.type === 'invest' || ph.type === 'companyReveal' || ph.type === 'profiles') {
     Object.assign(s, investTotals());
   }
@@ -229,6 +236,7 @@ function meState(p) {
     portfolioValue: portfolioValue(p),
   };
   if (ph.type === 'quiz') me.answer = p.answers[ph.q] || null;
+  if (PITCH_TYPES.includes(ph.type)) me.pitch = P.meView(game, p, ph);
   return me;
 }
 
@@ -253,6 +261,7 @@ function hostExtras() {
     names: [...game.players.values()].map((p) => ({ name: p.name, group: p.group, online: p.sockets.size > 0 })),
     next: C.phases[game.phaseIndex + 1] ? C.phases[game.phaseIndex + 1].id : null,
     awaitingReveal: ph.type === 'quiz' && !game.quizState[ph.q].revealed,
+    pitchStage: ph.type === 'pitchRound' ? game.pitch.rounds[ph.round].stage : ph.type === 'superVote' ? game.pitch.super.stage : null,
   };
 }
 
@@ -260,6 +269,7 @@ function enterPhase(i) {
   game.phaseIndex = Math.max(0, Math.min(C.phases.length - 1, i));
   game.maxPhase = Math.max(game.maxPhase, game.phaseIndex);
   const ph = phase();
+  if (['ceoAssign', 'pitchRound', 'superVote'].includes(ph.type)) P.assignCeos(game);
   if (ph.type === 'quiz' && !game.quizState[ph.q]) {
     game.quizState[ph.q] = { start: Date.now(), revealed: false };
     // Nudge everyone when time runs out so screens show "time's up".
@@ -295,6 +305,9 @@ io.on('connection', (socket) => {
       game.quizState[ph.q].revealed = true;
       return broadcast();
     }
+    // Pitch rounds step through pick -> decide -> reveal before moving on.
+    if (ph.type === 'pitchRound' && P.advanceRound(game, ph.round)) return broadcast();
+    if (ph.type === 'superVote' && P.advanceSuper(game)) return broadcast();
     enterPhase(game.phaseIndex + 1);
   });
   socket.on('host:back', () => isHost && enterPhase(game.phaseIndex - 1));
@@ -323,7 +336,7 @@ io.on('connection', (socket) => {
       player = game.players.get(pid);
     } else if (name) {
       pid = crypto.randomBytes(8).toString('hex');
-      player = newPlayer(pid, cleanName(name), C.groups.includes(group) ? group : null);
+      player = newPlayer(pid, cleanName(name), C.groups.includes(group) ? group : smallestGroup());
       game.players.set(pid, player);
     } else {
       return ack && ack({ ok: false });
@@ -340,6 +353,23 @@ io.on('connection', (socket) => {
     if (!m.options.includes(choice)) return;
     player.votes[m.id] = choice;
     broadcast();
+  });
+
+  // ----- Activity #1: The Pitch -----
+  socket.on('pitch:pick', (idx) => {
+    const ph = phase();
+    if (player && ph.type === 'pitchRound' && P.pick(game, player, ph.round, idx)) broadcast();
+  });
+  socket.on('pitch:vote', (choice) => {
+    const ph = phase();
+    if (player && ph.type === 'pitchRound' && P.vote(game, player, ph.round, choice)) broadcast();
+  });
+  socket.on('pitch:verify', () => {
+    const ph = phase();
+    if (player && ph.type === 'pitchRound' && P.verify(game, player, ph.round)) broadcast();
+  });
+  socket.on('pitch:super', (choice) => {
+    if (player && phase().type === 'superVote' && P.superVote(game, player, choice)) broadcast();
   });
 
   socket.on('invest', (alloc, ack) => {
@@ -392,6 +422,10 @@ app.get('/content.json', (req, res) => {
     companyOrder: C.companyOrder,
     groups: C.groups,
     scoring: C.scoring,
+    pitchRoundCount: C.pitchRounds.length,
+    verifyTokens: C.verifyTokens,
+    pitchPoints: C.pitchPoints,
+    superMotion: C.superMotion,
     activity2OnPhones: C.ACTIVITY2_ON_PHONES,
   });
 });
