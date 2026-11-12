@@ -41,7 +41,7 @@ main{padding:18px 20px 30px}
 .pos{color:var(--teal-d)}.neg{color:var(--red)}
 .tok{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--teal);margin-right:3px;vertical-align:-1px}
 .tok.used{background:#ddd}
-.strip{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
 .cell{border:1px solid var(--line);padding:6px;min-height:76px;font-size:13px;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:3px}
 .cell.cur{outline:3px solid var(--ink);outline-offset:-3px}
 .cell .t{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gray)}
@@ -94,8 +94,8 @@ const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 const socket = io();
-let D = null, verifyTokens = 2;
-fetch('/content.json').then((r) => r.json()).then((c) => { verifyTokens = c.verifyTokens; if (D) draw(); });
+let D = null, verifyTokens = 3, superAfter = 3;
+fetch('/content.json').then((r) => r.json()).then((c) => { verifyTokens = c.verifyTokens; superAfter = c.superAfter; if (D) draw(); });
 
 function auth(key) {
   socket.emit('dash:auth', key, (res) => {
@@ -161,7 +161,8 @@ function panel(g) {
     if (cur.stage === 'decide' && cur.voted < cur.boardSize) { flags.push(['', `Waiting on ${cur.boardSize - cur.voted} board vote${cur.boardSize - cur.voted === 1 ? '' : 's'}`]); state = state || 'wait'; }
   }
   if (D.superStage === 'decide' && g.ceo && g.super.voted < g.super.boardSize) { flags.push(['', `Waiting on ${g.super.boardSize - g.super.voted} vote${g.super.boardSize - g.super.voted === 1 ? '' : 's'}`]); state = state || 'wait'; }
-  const order = [roundCell(g.rounds[0]), roundCell(g.rounds[1]), superCell(g.super, D.superStage !== null), roundCell(g.rounds[2]), roundCell(g.rounds[3])];
+  const order = g.rounds.map(roundCell);
+  order.splice(superAfter, 0, superCell(g.super, D.superStage !== null));
   return `<div class="panel ${state}">
     <div class="gname">${esc(g.group)}${g.immune ? '<span class="badge">CEO immune</span>' : ''}</div>
     <div class="ceo">${g.ceo ? esc(g.ceo.name) + `<span class="dot ${g.ceo.online ? '' : 'off'}"></span><small>CEO</small>` : '<span style="color:var(--gray)">No CEO yet</span>'}</div>

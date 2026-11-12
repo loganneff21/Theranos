@@ -465,9 +465,9 @@ const views = {
       <div class="final"><div><div class="kicker">Top CEOs</div><div class="board" style="margin-top:12px">${S.ceoBoard.map((g, i) => lrow(i + 1, g.ceo, g.group, fmt(g.total.ceo), Math.max(0, g.total.ceo) / maxC, i)).join('')}</div></div>
       <div><div class="kicker">Top Boards</div><div class="board" style="margin-top:12px">${S.boardBoard.map((g, i) => lrow(i + 1, g.group, g.boardSize + (g.boardSize === 1 ? ' member' : ' members'), fmt(g.total.board), Math.max(0, g.total.board) / maxB, i)).join('')}</div></div></div>`;
   },
-  pitchTruth: () => `${titlebar('Activity #1 · These were real', 'Every lie card was a real claim', 'Two from Theranos, two from other companies whose boards missed it too.')}
-      <table class="ptab">${S.truths.map((t, i) => `<tr style="animation-delay:${0.3 + i * 0.6}s"><td style="width:13%"><b>${esc(t.company)}</b></td><td style="width:40%;font-family:var(--serif);font-size:26px">“${esc(t.lie)}”</td><td style="font-size:20px">${esc(t.truth)}</td></tr>`).join('')}</table>
-      <div class="punch fade" style="animation-delay:3s">${S.superApproved} of ${S.pitchGroups.length} of your boards gave their CEO 99.7% of the votes. The real board did too.</div>`,
+  pitchTruth: () => `${titlebar('Activity #1 · These were real', 'Every lie card was a real claim', 'Two from Theranos, four from other companies whose boards missed it too.')}
+      <table class="ptab">${S.truths.map((t, i) => `<tr style="animation-delay:${0.3 + i * 0.6}s"><td style="width:13%"><b>${esc(t.company)}</b></td><td style="width:38%;font-family:var(--serif);font-size:21px;line-height:1.2">“${esc(t.lie)}”</td><td style="font-size:16px;line-height:1.3">${esc(t.truth)}</td></tr>`).join('')}</table>
+      <div class="punch fade" style="animation-delay:4.2s">${S.superApproved} of ${S.pitchGroups.length} of your boards gave their CEO 99.7% of the votes. The real board did too.</div>`,
   slidesBreak: () => `<div class="big-center"><div><div class="kicker">Back to the presentation</div><h1>Phones down for now</h1>
      <div class="rules">Next: how Theranos’s board actually failed.<br>Keep this page open on your phone. You’ll need it again for the final quiz.</div></div></div>`,
   paperBreak: () => `<div class="big-center"><div><div class="kicker">Activity #2 · Phones down</div><h1>You have $10 million</h1>
