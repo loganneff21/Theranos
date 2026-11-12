@@ -183,6 +183,9 @@ function draw() {
       <span>Points shown as CEO / Board</span><span>🔍 = board used a verify token</span></div>` +
     (D.groups.length ? `<div class="grid">${D.groups.map(panel).join('')}</div>` : '<div class="empty">No one has joined yet.</div>');
 }
+
+// Keep the free server awake while this page is open (it sleeps after 15 quiet minutes, which would erase the game).
+setInterval(function () { fetch('/healthz', { cache: 'no-store' }).catch(function () {}); }, 4 * 60 * 1000);
 </script>
 </body>
 </html>

@@ -615,6 +615,9 @@ function countUp(el, to, ms) {
   };
   requestAnimationFrame(f);
 }
+
+// Keep the free server awake while this page is open (it sleeps after 15 quiet minutes, which would erase the game).
+setInterval(function () { fetch('/healthz', { cache: 'no-store' }).catch(function () {}); }, 4 * 60 * 1000);
 </script>
 </body>
 </html>
