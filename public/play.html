@@ -87,6 +87,11 @@ input{display:block;width:100%;font-size:20px;font-weight:600;padding:15px 14px;
 .res{border-radius:22px;border:2px solid var(--ink);padding:24px 16px;text-align:center;color:#fff;margin-top:6px;box-shadow:0 6px 0 var(--ink)}
 .res.good{background:var(--teal-d)}.res.bad{background:var(--blood)}.res.none{background:var(--gray)}
 .res .big{font-size:50px}
+.lean{margin:12px 0 4px;border:2px solid var(--ink);border-radius:12px;padding:10px 12px;background:#fff}
+.lean .lt{font-size:13px;font-weight:700;color:var(--gray)}
+.lean .lb{display:flex;flex-wrap:wrap;margin-top:4px;font-size:17px}
+.lean .lb span{margin-right:14px}
+.lean .lh{font-size:14px;margin-top:6px;color:var(--teal-d);font-weight:700}
 .vrow{display:flex;justify-content:space-between;align-items:center;padding:13px 2px;border-top:2px solid var(--line);font-size:16px}
 .vrow>*+*{margin-left:12px}
 .vrow b{white-space:nowrap;font-size:20px}
@@ -197,7 +202,8 @@ function viewKey() {
     case 'quiz': return ph.id + ':' + (S.quiz.revealed ? 'r' : 'o') + ':' + (m.answer ? m.answer.choice : '');
     case 'lobby': return 'lobby';
     case 'ceoAssign': case 'pitchRound': case 'superVote': case 'pitchStandings':
-      return ph.id + ':' + ((S.round && S.round.stage) || (S.superVote && S.superVote.stage) || '') + ':' + JSON.stringify(m.pitch);
+      // The board's live lean updates in place (see draw), so it is left out of the key.
+      return ph.id + ':' + ((S.round && S.round.stage) || (S.superVote && S.superVote.stage) || '') + ':' + JSON.stringify(m.pitch, (k, v) => (k === 'lean' ? undefined : v));
     default: return ph.id + ':' + m.score.total + ':' + m.rank;
   }
 }
@@ -206,7 +212,7 @@ function draw() {
   if (!C) return;
   header();
   const key = viewKey();
-  if (key === lastKey && key !== 'join') return;
+  if (key === lastKey && key !== 'join') { const l = $('#lean'); if (l && S.me.pitch) l.innerHTML = leanHtml(S.me.pitch); return; }
   if (key === 'join' && lastKey === 'join' && $('#name')) return;
   lastKey = key;
   clearInterval(tick);
@@ -269,6 +275,7 @@ const V = {
         : (res.decision === 'believe' ? (res.kind === 'honest' ? 'Your board trusted the truth.' : 'Your board believed it: you got played.') : (caught ? 'Your board caught it.' : 'Your board challenged the truth.'));
       return `${head}<div class="res ${mine > 0 ? 'good' : mine < 0 ? 'bad' : 'none'}"><div style="font-size:16px;opacity:.85">${p.role === 'ceo' ? 'You pitched' : 'Your CEO told you'}</div>
         <div class="big" style="font-size:36px">${esc(res.label)}</div><div style="font-size:18px;margin-top:6px">${esc(msg)} ${mine > 0 ? '+' : ''}${mine} ${p.role === 'ceo' ? 'for you' : 'for the board'}</div></div>
+        ${res.united && p.role !== 'ceo' ? `<div class="ok" style="font-size:17px;margin-top:10px">United board bonus: +${C.unanimousBonus} included</div>` : ''}
         <div class="claim" style="font-size:18px">${esc(res.text)}</div>
         <div class="vrow"><span>${p.role === 'ceo' ? 'Your CEO points' : 'Board points'}</span><b>${p.teamPoints}</b></div>`;
     }
@@ -285,6 +292,7 @@ const V = {
     if (r.stage === 'pick') return head + wait(`${p.ceoName} is choosing what to tell you…`, 'Listen closely when they pitch.');
     return `${head}<div class="muted">${esc(p.ceoName)} says:</div><div class="claim">${esc(p.claim)}</div>
       ${p.verified ? `<div class="truthtag lab ${p.truthLabel.toLowerCase()}">Test result: ${p.truthLabel === 'Honest' ? 'honest' : p.truthLabel === 'Lie' ? 'a lie' : 'an exaggeration'}</div>` : ''}
+      <div id="lean">${leanHtml(p)}</div>
       <button class="vbtn believe ${p.myVote === 'believe' ? 'on' : ''}" data-v="believe">Believe</button>
       <button class="vbtn challenge ${p.myVote === 'challenge' ? 'on' : ''}" data-v="challenge">Challenge</button>
       ${p.verified ? '' : `<button class="verify" id="verify" ${p.tokens <= 0 ? 'disabled' : ''}>${drops(p.tokens)} ${p.tokens > 0 ? 'Run the test on this claim' : 'No tests left'}</button><p style="font-size:14px;text-align:center;margin-top:8px">A test shows your whole board the truth. You get ${C.verifyTokens} for the game.</p>`}
@@ -361,6 +369,15 @@ const V = {
       <span style="font-weight:800;color:var(--ink)">Total</span><b>${s.total.toLocaleString()}</b></div></div>`;
   },
 };
+
+function leanHtml(p) {
+  const l = p.lean;
+  if (!l) return '';
+  const all = l.waiting === 0 && (l.believe === l.size || l.challenge === l.size);
+  return `<div class="lean"><div class="lt">Your board right now</div>
+    <div class="lb"><span><b>${l.believe}</b> Believe</span><span><b>${l.challenge}</b> Challenge</span>${l.waiting ? `<span><b>${l.waiting}</b> undecided</span>` : ''}</div>
+    <div class="lh">${all ? '✓ United. If you’re right, the board gets +' + C.unanimousBonus + ' bonus.' : 'Talk it out: if the whole board agrees and is right, you get +' + C.unanimousBonus + ' bonus.'}</div></div>`;
+}
 
 function drops(n) { let h = ''; for (let i = 0; i < C.verifyTokens; i++) h += `<span class="drop ${i < n ? '' : 'used'}"></span>`; return h; }
 function sign(n) { return (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n); }
