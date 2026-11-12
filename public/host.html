@@ -441,7 +441,7 @@ const views = {
         <td><span class="kind ${g.result.kind}">${esc(kindName(g.result.kind))}</span> <span style="font-size:17px">${esc(g.result.text)}</span></td>
         <td>${g.result.decision === 'believe' ? 'Believed' : 'Challenged'}${g.result.verified ? ' <span style="color:var(--gray);font-size:15px">(verified)</span>' : ''}${g.result.united ? ' <span style="color:var(--teal-d);font-weight:800;font-size:15px">United +' + C.unanimousBonus + '</span>' : ''}</td>
         <td class="num ${cls(g.result.ceo)}">${fmt(g.result.ceo)}${g.result.immune && g.result.kind !== 'honest' && g.result.decision === 'challenge' ? '<div style="font-size:12px;color:var(--red)">immune</div>' : ''}</td><td class="num ${cls(g.result.board)}">${fmt(g.result.board)}</td></tr>`).join('')}</table>
-      <div class="truthbox"><b>What really happened at ${esc(r.company)}</b>${esc(r.said)}: “${esc(lie.text)}” ${esc(r.truth)}</div>`;
+      <div class="truthbox"><b>${r.company === 'Theranos' ? 'What came out later (SEC, 2018), not what the board knew then' : 'What really happened at ' + esc(r.company)}</b>${esc(r.said)}: “${esc(lie.text)}” ${esc(r.truth)}</div>`;
   },
   superVote: () => {
     const sv = S.superVote;
@@ -465,7 +465,7 @@ const views = {
       <div class="final"><div><div class="kicker">Top CEOs</div><div class="board" style="margin-top:12px">${S.ceoBoard.map((g, i) => lrow(i + 1, g.ceo, g.group, fmt(g.total.ceo), Math.max(0, g.total.ceo) / maxC, i)).join('')}</div></div>
       <div><div class="kicker">Top Boards</div><div class="board" style="margin-top:12px">${S.boardBoard.map((g, i) => lrow(i + 1, g.group, g.boardSize + (g.boardSize === 1 ? ' member' : ' members'), fmt(g.total.board), Math.max(0, g.total.board) / maxB, i)).join('')}</div></div></div>`;
   },
-  pitchTruth: () => `${titlebar('Activity #1 · These were real', 'Every lie card was a real claim', 'Two from Theranos, four from other companies whose boards missed it too.')}
+  pitchTruth: () => `${titlebar('Activity #1 · These were real', 'Every lie card was a real claim', 'Two from Theranos (from later SEC complaints, not what the board knew then), four from other companies whose boards missed it too.')}
       <table class="ptab">${S.truths.map((t, i) => `<tr style="animation-delay:${0.3 + i * 0.6}s"><td style="width:13%"><b>${esc(t.company)}</b></td><td style="width:38%;font-family:var(--serif);font-size:21px;line-height:1.2">“${esc(t.lie)}”</td><td style="font-size:16px;line-height:1.3">${esc(t.truth)}</td></tr>`).join('')}</table>
       <div class="punch fade" style="animation-delay:4.2s">${S.superApproved} of ${S.pitchGroups.length} of your boards gave their CEO 99.7% of the votes. The real board did too.</div>`,
   slidesBreak: () => `<div class="big-center"><div><div class="kicker">Back to the presentation</div><h1>Phones down for now</h1>
