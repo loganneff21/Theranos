@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Theranos Game · Live Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#4dbfa8;--teal-d:#2f9b86;--teal-l:#e6f6f2;--ink:#1d1d1f;--gray:#5f6163;--band:#bfbfbf;--line:#e3e3e3;--soft:#f4f4f4;--red:#c8463c;--amber:#d99a2b;
+  --serif:'EB Garamond',Garamond,Georgia,serif;--sans:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#fff;color:var(--ink);font-family:var(--sans)}
+.topline{height:8px;background:var(--teal)}
+header{background:var(--band);display:flex;align-items:center;gap:18px;padding:10px 20px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:24px;letter-spacing:-1px;color:var(--gray)}
+.logo i{display:inline-block;width:.72em;height:.72em;border-radius:50%;background:linear-gradient(180deg,#bfe9df,var(--teal-d));vertical-align:-.02em}
+.tag{background:#fff;padding:6px 12px;font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal-d)}
+.status{font-family:var(--serif);font-size:26px;font-weight:700}
+.count{margin-left:auto;background:#fff;padding:6px 12px;font-size:15px}
+.count b{font-size:18px}
+main{padding:18px 20px 30px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--gray);margin-bottom:14px;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:16px}
+.panel{border:1px solid var(--line);border-top:8px solid var(--teal);padding:14px 16px;background:#fff;position:relative}
+.panel.wait{border-top-color:var(--amber)}
+.panel.alert{border-top-color:var(--red)}
+.ph{display:flex;align-items:baseline;gap:10px}
+.gname{font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gray)}
+.ceo{font-family:var(--serif);font-size:28px;font-weight:700;line-height:1.1;margin-top:2px}
+.ceo small{font-family:var(--sans);font-size:12px;font-weight:700;color:var(--gray);letter-spacing:.08em;margin-left:6px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--teal);margin-left:6px;vertical-align:2px}
+.dot.off{background:var(--red)}
+.badge{display:inline-block;font-size:12px;font-weight:800;padding:3px 8px;color:#fff;background:var(--red);margin-left:8px;vertical-align:4px}
+.flag{margin-top:8px;font-size:14px;font-weight:700;color:var(--amber)}
+.flag.red{color:var(--red)}
+.scores{display:flex;gap:10px;margin:10px 0}
+.score{flex:1;background:var(--soft);padding:8px 10px}
+.score span{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray)}
+.score b{display:block;font-size:30px;font-weight:800}
+.pos{color:var(--teal-d)}.neg{color:var(--red)}
+.tok{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--teal);margin-right:3px;vertical-align:-1px}
+.tok.used{background:#ddd}
+.strip{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.cell{border:1px solid var(--line);padding:6px;min-height:76px;font-size:13px;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:3px}
+.cell.cur{outline:3px solid var(--ink);outline-offset:-3px}
+.cell .t{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gray)}
+.cell.up{color:#aaa;background:var(--soft)}
+.k{display:inline-block;color:#fff;font-weight:800;font-size:12px;padding:2px 6px}
+.k.honest{background:var(--teal-d)}.k.exaggeration{background:var(--amber)}.k.lie{background:var(--red)}
+.pts{font-weight:800;font-size:14px}
+.members{margin-top:10px;font-size:13px;color:var(--gray);line-height:1.6}
+.members span{white-space:nowrap;margin-right:8px}
+.members .off{color:#bbb;text-decoration:line-through}
+.empty{font-size:20px;color:var(--gray);padding:40px 0}
+.login{max-width:440px;margin:12vh auto;padding:0 16px}
+.login h2{font-family:var(--serif);font-size:34px}
+.login input{font-size:20px;padding:12px;width:100%;margin:14px 0;border:2px solid var(--ink)}
+.login button{font:700 18px var(--sans);padding:12px 22px;background:var(--teal-d);color:#fff;border:0}
+.login p{color:var(--gray);margin-top:8px}
+.conn{position:fixed;left:0;right:0;bottom:0;background:var(--amber);color:#fff;text-align:center;font-weight:700;padding:8px}
+</style>
+</head>
+<body>
+<div class="topline"></div>
+<header>
+  <div class="logo">theran<i></i>s</div>
+  <div class="tag">Live dashboard · view only</div>
+  <div class="status" id="status">Connecting…</div>
+  <div class="count" id="count"></div>
+</header>
+<main id="main"></main>
+<div class="conn" id="conn" hidden>Reconnecting…</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+const socket = io();
+let D = null, verifyTokens = 2;
+fetch('/content.json').then((r) => r.json()).then((c) => { verifyTokens = c.verifyTokens; if (D) draw(); });
+
+function auth(key) {
+  socket.emit('dash:auth', key, (res) => {
+    if (res && res.ok) { store.set('hostKey', key); return; }
+    $('#status').textContent = 'Locked';
+    $('#main').innerHTML = `<div class="login"><h2>Enter host key</h2><p>Same word as the projector screen. This page is view-only.</p>
+      <input id="k" type="password" placeholder="Host key"><button id="go">Open dashboard</button></div>`;
+    $('#go').onclick = () => auth($('#k').value);
+    $('#k').onkeydown = (e) => { if (e.key === 'Enter') auth($('#k').value); };
+  });
+}
+socket.on('connect', () => { $('#conn').hidden = true; auth(new URLSearchParams(location.search).get('key') || store.get('hostKey') || ''); });
+socket.on('disconnect', () => { $('#conn').hidden = false; });
+socket.on('dash', (d) => { D = d; draw(); });
+
+const fmt = (n) => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n);
+const cls = (n) => (n > 0 ? 'pos' : n < 0 ? 'neg' : '');
+const kindShort = { honest: 'Honest', exaggeration: 'Exag.', lie: 'Lie' };
+
+function statusLine() {
+  const ph = D.phase;
+  if (D.round) return `Round ${D.round.number} of ${D.round.total} · ${D.round.topic} · ${{ pick: 'CEOs choosing', decide: 'Boards voting', reveal: 'Reveal' }[D.round.stage]}`;
+  if (ph.type === 'superVote') return `Surprise proposal · ${D.superStage === 'decide' ? 'Boards voting' : 'Reveal'}`;
+  return {
+    lobby: 'Players joining', vote: 'Warm-up poll', pitchRules: 'Explaining the rules', ceoAssign: 'CEOs assigned',
+    pitchStandings: 'Activity #1 results', pitchTruth: 'What Theranos really said', callback: 'Back to lecture',
+    paperBreak: 'Activity #2 (on paper)', quizIntro: 'Quiz starting', quiz: 'Lightning quiz', final: 'Final results',
+  }[ph.type] || ph.id;
+}
+
+function tokens(n) { let h = ''; for (let i = 0; i < verifyTokens; i++) h += `<span class="tok ${i < n ? '' : 'used'}"></span>`; return h; }
+
+function cell(label, body, opts = {}) {
+  return `<div class="cell ${opts.cur ? 'cur' : ''} ${opts.up ? 'up' : ''}"><div class="t">${esc(label)}</div>${body}</div>`;
+}
+
+function roundCell(r) {
+  if (r.stage === 'upcoming') return cell(r.topic, '—', { up: true });
+  if (r.stage === 'reveal' && r.kind) {
+    return cell(r.topic, `<div><span class="k ${r.kind}">${kindShort[r.kind]}</span></div>
+      <div>${r.decision === 'believe' ? 'Believed' : 'Challenged'}${r.verified ? ' 🔍' : ''}</div>
+      <div class="pts"><span class="${cls(r.ceo)}">${fmt(r.ceo)}</span> / <span class="${cls(r.board)}">${fmt(r.board)}</span></div>`, { cur: r.current });
+  }
+  if (r.stage === 'pick') return cell(r.topic, r.picked ? '<b class="pos">✓ Picked</b>' : '<b style="color:var(--amber)">Choosing…</b>', { cur: r.current });
+  if (r.stage === 'decide') return cell(r.topic, `<b class="${r.voted >= r.boardSize ? 'pos' : ''}" style="${r.voted >= r.boardSize ? '' : 'color:var(--amber)'}">${r.voted}/${r.boardSize} voted</b>${r.verified ? '<div>🔍 verified</div>' : ''}`, { cur: r.current });
+  return cell(r.topic, '—', { cur: r.current });
+}
+
+function superCell(s, current) {
+  if (s.stage === 'reveal' && s.decision) return cell('99.7% vote', `<b class="${s.decision === 'approve' ? 'neg' : 'pos'}">${s.decision === 'approve' ? 'Approved' : 'Rejected'}</b>`, { cur: current });
+  if (s.stage === 'decide') return cell('99.7% vote', `<b style="color:var(--amber)">${s.voted}/${s.boardSize} voted</b>`, { cur: current });
+  return cell('99.7% vote', '—', { up: true });
+}
+
+function panel(g) {
+  const flags = [];
+  let state = '';
+  if (!g.ceo) { flags.push(['red', 'Needs at least 2 people for a CEO']); state = 'alert'; }
+  else if (!g.ceo.online) { flags.push(['red', 'CEO’s phone is offline']); state = 'alert'; }
+  const cur = g.rounds.find((r) => r.current);
+  if (cur && g.ceo) {
+    if (cur.stage === 'pick' && !cur.picked) { flags.push(['', 'Waiting on the CEO to pick']); state = state || 'wait'; }
+    if (cur.stage === 'decide' && cur.voted < cur.boardSize) { flags.push(['', `Waiting on ${cur.boardSize - cur.voted} board vote${cur.boardSize - cur.voted === 1 ? '' : 's'}`]); state = state || 'wait'; }
+  }
+  if (D.superStage === 'decide' && g.ceo && g.super.voted < g.super.boardSize) { flags.push(['', `Waiting on ${g.super.boardSize - g.super.voted} vote${g.super.boardSize - g.super.voted === 1 ? '' : 's'}`]); state = state || 'wait'; }
+  const order = [roundCell(g.rounds[0]), roundCell(g.rounds[1]), superCell(g.super, D.superStage !== null), roundCell(g.rounds[2]), roundCell(g.rounds[3])];
+  return `<div class="panel ${state}">
+    <div class="gname">${esc(g.group)}${g.immune ? '<span class="badge">CEO immune</span>' : ''}</div>
+    <div class="ceo">${g.ceo ? esc(g.ceo.name) + `<span class="dot ${g.ceo.online ? '' : 'off'}"></span><small>CEO</small>` : '<span style="color:var(--gray)">No CEO yet</span>'}</div>
+    ${flags.map(([c, t]) => `<div class="flag ${c}">${esc(t)}</div>`).join('')}
+    <div class="scores"><div class="score"><span>CEO</span><b class="${cls(g.totals.ceo)}">${fmt(g.totals.ceo)}</b></div>
+      <div class="score"><span>Board</span><b class="${cls(g.totals.board)}">${fmt(g.totals.board)}</b></div>
+      <div class="score"><span>Verify left</span><div style="margin-top:10px">${tokens(g.tokens)}</div></div></div>
+    <div class="strip">${order.join('')}</div>
+    <div class="members">${g.members.map((m) => `<span class="${m.online ? '' : 'off'}">${esc(m.name)}${m.ceo ? ' (CEO)' : ''}</span>`).join('')}</div>
+  </div>`;
+}
+
+function draw() {
+  $('#status').textContent = statusLine();
+  $('#count').innerHTML = `<b>${D.online}</b> of ${D.players} phones connected`;
+  $('#main').innerHTML = `<div class="legend"><span>Card choices stay hidden until each reveal.</span>
+      <span><span class="k honest">Honest</span> <span class="k exaggeration">Exag.</span> <span class="k lie">Lie</span></span>
+      <span>Points shown as CEO / Board</span><span>🔍 = board used a verify token</span></div>` +
+    (D.groups.length ? `<div class="grid">${D.groups.map(panel).join('')}</div>` : '<div class="empty">No one has joined yet.</div>');
+}
+</script>
+</body>
+</html>
