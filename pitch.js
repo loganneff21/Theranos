@@ -177,7 +177,7 @@ function publicView(game, ph) {
       };
     });
     if (round.stage === 'reveal') view.round.cards = def.cards.map((c) => ({ ...c, label: C.kindLabel[c.kind] }));
-    if (round.stage === 'reveal') view.round.truth = def.truth;
+    if (round.stage === 'reveal') { view.round.truth = def.truth; view.round.said = def.said; view.round.company = def.company; }
     return view;
   }
   if (ph.type === 'superVote') {
@@ -198,7 +198,7 @@ function publicView(game, ph) {
       ceoBoard: [...rows].sort((a, b) => b.total.ceo - a.total.ceo),
       boardBoard: [...rows].sort((a, b) => b.total.board - a.total.board),
       superApproved: approved,
-      truths: C.pitchRounds.map((rd) => ({ topic: rd.topic, lie: rd.cards.find((c) => c.kind === 'lie').text, truth: rd.truth })),
+      truths: C.pitchRounds.map((rd) => ({ topic: rd.topic, company: rd.company, lie: rd.cards.find((c) => c.kind === 'lie').text, truth: rd.truth })),
       superReal: C.superMotion.real,
     };
   }

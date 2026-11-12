@@ -181,12 +181,14 @@ const groups = ['Board 1', 'Board 2', 'Board 3', 'Board 4', 'Board 5', 'Board 6'
 
 
 // ---------------- Activity #1: The Pitch (CEO vs. board) ----------------
-// Real claims Theranos executives made to investors and partners, from the SEC's 2018 complaint
-// against Holmes and Balwani (allegations; both were later convicted of fraud in criminal trials).
-// None of these are in the IMD case, so students can't know the answers from the reading.
+// Every lie card is a real claim. Theranos rounds come from the SEC's 2018 complaint against Holmes and
+// Balwani (allegations; both were later convicted of fraud). Two rounds use other companies (Nikola,
+// Volkswagen) to show the same governance failure elsewhere. None of this is in the IMD case reading.
 const pitchRounds = [
   {
     topic: 'Military',
+    company: 'Theranos',
+    said: 'Theranos told investors',
     cards: [
       { kind: 'honest', text: 'The Department of Defense has used our technology in a burn study.' },
       { kind: 'exaggeration', text: 'We have Defense Department contracts that will bring in future revenue.' },
@@ -195,7 +197,21 @@ const pitchRounds = [
     truth: 'It was used in one Defense Department burn study, never on the battlefield or medevac helicopters. Theranos earned about $300,000 from three Defense contracts over four years.',
   },
   {
+    // Not Theranos: the same governance failure at an electric-truck startup.
+    topic: 'The electric truck',
+    company: 'Nikola',
+    said: 'Nikola’s founder told the public',
+    cards: [
+      { kind: 'honest', text: 'Our truck prototype can’t drive under its own power yet.' },
+      { kind: 'exaggeration', text: 'Our prototype is nearly ready for the road.' },
+      { kind: 'lie', text: 'This is a real, fully functioning truck. It is not a pusher.' },
+    ],
+    truth: 'The truck could not drive. A later promo video of it “in motion” was filmed by rolling it down a hill. Founder Trevor Milton was convicted of fraud in 2022 and sentenced to four years.',
+  },
+  {
     topic: 'Revenue',
+    company: 'Theranos',
+    said: 'Theranos told investors',
     cards: [
       { kind: 'honest', text: 'We are losing about $8–9 million a month right now.' },
       { kind: 'exaggeration', text: 'Most of our revenue comes from the military.' },
@@ -204,22 +220,16 @@ const pitchRounds = [
     truth: 'Investor binders projected over $100 million in 2014 revenue. Theranos actually brought in a little more than $100,000.',
   },
   {
-    topic: 'Retail rollout',
+    // Not Theranos: a giant public company with a board that missed it too.
+    topic: 'Clean engines',
+    company: 'Volkswagen',
+    said: 'Volkswagen advertised',
     cards: [
-      { kind: 'honest', text: 'We are in talks with our pharmacy partner about a rollout.' },
-      { kind: 'exaggeration', text: 'We will roll out to hundreds of pharmacy stores next year.' },
-      { kind: 'lie', text: 'A major grocery chain is launching us in 100+ stores in January.' },
+      { kind: 'honest', text: 'Our diesel cars can’t meet US emissions limits in normal driving.' },
+      { kind: 'exaggeration', text: 'Our diesels are among the cleanest cars on the road.' },
+      { kind: 'lie', text: 'Our clean diesel engines meet the strictest emissions standards.' },
     ],
-    truth: 'The pharmacy rollout had quietly been cut from 500 stores to 200, and the grocery partnership had stalled; the companies had stopped talking.',
-  },
-  {
-    topic: 'Regulation',
-    cards: [
-      { kind: 'honest', text: 'The FDA has told us we need its clearance for our device.' },
-      { kind: 'exaggeration', text: 'We are working with the FDA on a submission.' },
-      { kind: 'lie', text: 'FDA approval is voluntary for us; we are only applying as a courtesy.' },
-    ],
-    truth: 'FDA representatives told Theranos clearance or approval was necessary, while executives kept telling investors it was voluntary.',
+    truth: 'About 11 million cars carried software that cheated emissions tests. On the road they emitted up to 40 times the US limit. Volkswagen admitted it in 2015.',
   },
 ];
 
@@ -264,7 +274,10 @@ const phases = [
         ...revealOrder.map((c) => ({ id: 'reveal' + c, type: 'companyReveal', company: c, section: 'Activity #2' })),
         { id: 'portfolio', type: 'portfolio', section: 'Activity #2' },
       ]
-    : [{ id: 'paperBreak', type: 'paperBreak', section: 'Activity #2' }]),
+    : [
+        { id: 'slidesBreak', type: 'slidesBreak', section: 'Theranos Fraud' },
+        { id: 'paperBreak', type: 'paperBreak', section: 'Activity #2' },
+      ]),
   { id: 'quizIntro', type: 'quizIntro', section: 'Quiz' },
   ...quiz.map((_, i) => ({ id: 'q' + (i + 1), type: 'quiz', q: i, section: 'Quiz' })),
   { id: 'final', type: 'final', section: 'Results' },
