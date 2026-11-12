@@ -470,8 +470,8 @@ const views = {
       <div class="punch fade" style="animation-delay:4.2s">${S.superApproved} of ${S.pitchGroups.length} of your boards gave their CEO 99.7% of the votes. The real board did too.</div>`,
   slidesBreak: () => `<div class="big-center"><div><div class="kicker">Back to the presentation</div><h1>Phones down for now</h1>
      <div class="rules">Next: how Theranos’s board actually failed.<br>Keep this page open on your phone. You’ll need it again for the final quiz.</div></div></div>`,
-  paperBreak: () => `<div class="big-center"><div><div class="kicker">Activity #2 · Phones down</div><h1>You have $10 million</h1>
-     <div class="rules">Activity #2 is on paper. Grab your group's packet.<br><b>Four disguised companies</b> · <b>split $10M</b> · <b>max $5M each</b><br>Use the lecture's Governance Deep Dive lenses. Keep this tab open: we'll be back for the final quiz.</div></div></div>`,
+  paperBreak: () => `<div class="big-center"><div><div class="kicker">Activity #2 · Phones down</div><h1>Blindsided: The $10 Million Bet</h1>
+     <div class="rules">Activity #2 is on paper. Grab your group's worksheet.<br><b>Four disguised companies</b> · <b>split $10M</b> · <b>max $5M each</b><br>Use the lecture's Governance Deep Dive lenses. Keep this tab open: we'll be back for the final quiz.</div></div></div>`,
   profiles: () => `${titlebar('Activity #2 · You have $10 million', 'Four companies want your money', 'Names are hidden. Governance isn’t. Read them through the lecture’s Deep Dive lenses; investing opens next.')}
      <div class="cards">${C.companyOrder.map((k) => card(k, false)).join('')}</div>`,
   invest: () => `${titlebar('Activity #2 · Invest now', 'Split $10M on your phone', 'Max $5M per company · <span id="sub">0</span> of ' + S.players + ' portfolios in')}

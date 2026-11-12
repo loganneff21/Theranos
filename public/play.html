@@ -312,7 +312,7 @@ const V = {
   },
   pitchTruth: () => wait('Every lie card was real', 'Two came from Theranos and two from other companies. Watch the screen.'),
   slidesBreak: () => wait('Phones down for now', 'Back to the presentation. Keep this page open: you’ll need it for the final quiz.'),
-  paperBreak: () => wait('Phones down for Activity #2', 'It’s on paper with your group. Keep this page open; the final quiz comes back here.'),
+  paperBreak: () => wait('Phones down for Blindsided: The $10 Million Bet', 'Activity #2 is on paper with your group. Keep this page open; the final quiz comes back here.'),
   profiles: () => `<div class="kicker">Activity #2 · You have $10M</div><h2>Study the four companies</h2><p>Investing opens next. Names are disguised; judge them with the lecture’s Deep Dive lenses.</p>
     ${C.companyOrder.map((k) => coCard(k, false)).join('')}`,
   invest: () => {
