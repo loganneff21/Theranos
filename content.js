@@ -182,8 +182,8 @@ const groups = ['Board 1', 'Board 2', 'Board 3', 'Board 4', 'Board 5', 'Board 6'
 
 // ---------------- Activity #1: The Pitch (CEO vs. board) ----------------
 // Every lie card is a real claim. Theranos rounds come from the SEC's 2018 complaint against Holmes and
-// Balwani (allegations; both were later convicted of fraud). Two rounds use other companies (Nikola,
-// Volkswagen) to show the same governance failure elsewhere. None of this is in the IMD case reading.
+// Balwani (allegations; both were later convicted of fraud). Four rounds use other companies (Nikola,
+// Wells Fargo, Enron, Volkswagen) to show the same governance failure elsewhere. None of this is in the IMD case reading.
 const pitchRounds = [
   {
     topic: 'Military',
@@ -209,6 +209,18 @@ const pitchRounds = [
     truth: 'The truck could not drive. A later promo video of it “in motion” was filmed by rolling it down a hill. Founder Trevor Milton was convicted of fraud in 2022 and sentenced to four years.',
   },
   {
+    // Not Theranos: a big public bank whose board missed it for years.
+    topic: 'Cross-selling',
+    company: 'Wells Fargo',
+    said: 'Wells Fargo told investors',
+    cards: [
+      { kind: 'honest', text: 'Our branch employees work under tough daily sales goals.' },
+      { kind: 'exaggeration', text: 'The average household uses about six of our products.' },
+      { kind: 'lie', text: 'Our sales growth comes from serving customers’ real needs.' },
+    ],
+    truth: 'To hit sales goals, employees opened millions of accounts customers never asked for. In 2020 Wells Fargo paid $3 billion to settle with the Justice Department and the SEC, which said it misled investors about its “needs-based” sales model.',
+  },
+  {
     topic: 'Revenue',
     company: 'Theranos',
     said: 'Theranos told investors',
@@ -218,6 +230,18 @@ const pitchRounds = [
       { kind: 'lie', text: 'We will book over $100 million in revenue this year.' },
     ],
     truth: 'Investor binders projected over $100 million in 2014 revenue. Theranos actually brought in a little more than $100,000.',
+  },
+  {
+    // Not Theranos: the classic case of a board that waived its own rules.
+    topic: 'The energy giant',
+    company: 'Enron',
+    said: 'Enron’s CEO told employees',
+    cards: [
+      { kind: 'honest', text: 'Our CFO also runs outside partnerships that do deals with Enron.' },
+      { kind: 'exaggeration', text: 'Our partnerships are disclosed in our financial statements.' },
+      { kind: 'lie', text: 'Enron stock is an incredible bargain right now.' },
+    ],
+    truth: 'In September 2001 Ken Lay called the stock an incredible bargain. Weeks later Enron cut its past profits by $586 million because partnerships run by its CFO had hidden losses and debt. It went bankrupt in December 2001.',
   },
   {
     // Not Theranos: a giant public company with a board that missed it too.
@@ -241,9 +265,10 @@ const pitchPoints = {
   exaggeration: { believe: [2, -1], challenge: [-2, 1] },
   lie: { believe: [3, -2], challenge: [-3, 2] },
 };
-const verifyTokens = 2; // per board, for the whole game
+const verifyTokens = 3; // per board, for the whole game
 const pointsScale = 100; // pitch points x 100 go on each player's game total
 
+const superAfter = 3; // the 99.7% vote comes after this many rounds
 const superMotion = {
   text: 'Your CEO proposes 100 votes for every share she owns: about 99.7% of all voting rights.',
   approve: { ceo: 2, board: -1, effect: 'The CEO can no longer lose points for getting caught.' },
@@ -258,11 +283,10 @@ const phases = [
   // Activity #1: "The Pitch" (CEO vs. board). The old five-motion version is kept in git history.
   { id: 'rules', type: 'pitchRules', section: 'Activity #1' },
   { id: 'ceos', type: 'ceoAssign', section: 'Activity #1' },
-  { id: 'r1', type: 'pitchRound', round: 0, section: 'Activity #1' },
-  { id: 'r2', type: 'pitchRound', round: 1, section: 'Activity #1' },
-  { id: 'super', type: 'superVote', section: 'Activity #1' },
-  { id: 'r3', type: 'pitchRound', round: 2, section: 'Activity #1' },
-  { id: 'r4', type: 'pitchRound', round: 3, section: 'Activity #1' },
+  ...pitchRounds.flatMap((_, i) => [
+    ...(i === superAfter ? [{ id: 'super', type: 'superVote', section: 'Activity #1' }] : []),
+    { id: 'r' + (i + 1), type: 'pitchRound', round: i, section: 'Activity #1' },
+  ]),
   { id: 'standings', type: 'pitchStandings', section: 'Activity #1' },
   { id: 'truth', type: 'pitchTruth', section: 'Activity #1' },
   { id: 'callback', type: 'callback', section: 'Activity #1' },
@@ -283,4 +307,4 @@ const phases = [
   { id: 'final', type: 'final', section: 'Results' },
 ];
 
-module.exports = { ACTIVITY2_ON_PHONES, pitchRounds, kindLabel, pitchPoints, verifyTokens, pointsScale, superMotion, motions, packetA, pitch, packetB, lenses, companies, companyOrder, revealOrder, quiz, scoring, groups, phases };
+module.exports = { ACTIVITY2_ON_PHONES, pitchRounds, kindLabel, pitchPoints, verifyTokens, pointsScale, superAfter, superMotion, motions, packetA, pitch, packetB, lenses, companies, companyOrder, revealOrder, quiz, scoring, groups, phases };

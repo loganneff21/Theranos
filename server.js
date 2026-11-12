@@ -451,6 +451,7 @@ app.get('/content.json', (req, res) => {
     verifyTokens: C.verifyTokens,
     pitchPoints: C.pitchPoints,
     superMotion: C.superMotion,
+    superAfter: C.superAfter,
     activity2OnPhones: C.ACTIVITY2_ON_PHONES,
   });
 });
