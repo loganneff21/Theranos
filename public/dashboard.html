@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Theranos Game · Live Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif&display=swap" rel="stylesheet">
 <style>
 :root{--teal:#4dbfa8;--teal-d:#2f9b86;--teal-l:#e6f6f2;--ink:#1d1d1f;--gray:#5f6163;--band:#bfbfbf;--line:#e3e3e3;--soft:#f4f4f4;--red:#c8463c;--amber:#d99a2b;
   --serif:'EB Garamond',Garamond,Georgia,serif;--sans:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
@@ -59,6 +59,22 @@ main{padding:18px 20px 30px}
 .login button{font:700 18px var(--sans);padding:12px 22px;background:var(--teal-d);color:#fff;border:0}
 .login p{color:var(--gray);margin-top:8px}
 .conn{position:fixed;left:0;right:0;bottom:0;background:var(--amber);color:#fff;text-align:center;font-weight:700;padding:8px}
+/* ---- lab theme ---- */
+:root{--teal:#2FA890;--teal-d:#1B7A68;--teal-l:#D6EFE8;--ink:#0E2A2B;--gray:#4F6B67;--band:#0E2A2B;--line:#C9DDD7;--paper:#EEF6F3;--soft:#E1EEEA;
+  --red:#B5122E;--amber:#C9820A;--slate:#2D4B8E;--rose:#8E2F6B;--serif:'Instrument Serif',Georgia,'Times New Roman',serif;--sans:'Archivo','Arial Narrow',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+.logo{color:#fff;font-stretch:80%}
+.logo i{width:.62em;height:.62em;background:var(--red);border-radius:0 55% 55% 55%;transform:rotate(45deg);margin:0 .12em 0 .1em;vertical-align:.02em}
+.topline{display:none}
+header{background:var(--ink)}
+.tag{border-radius:99px;letter-spacing:0;text-transform:none}
+.status{font-family:var(--sans);font-weight:800;font-stretch:78%;color:#fff}
+.count{border-radius:99px}
+body{background:var(--paper)}
+.panel{border-radius:18px;border-width:2px;border-top-width:10px}
+.ceo{font-family:var(--sans);font-weight:800;font-stretch:78%}
+.score{border-radius:12px}.cell{border-radius:10px;background:#fff}.cell.up{background:var(--soft)}
+.k,.badge{border-radius:99px}
+.tok{border-radius:0 55% 55% 55%;transform:rotate(45deg);background:var(--red);margin-right:6px}
 </style>
 </head>
 <body>

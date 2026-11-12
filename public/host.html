@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Theranos Game · Projector</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Serif&display=swap" rel="stylesheet">
 <style>
 :root{
   --teal:#4dbfa8; --teal-d:#2f9b86; --teal-l:#e6f6f2;
@@ -208,6 +208,59 @@ body.dark .tab.on{background:var(--teal);color:#fff}
 .login{max-width:520px;margin:12vh auto;font-family:var(--sans)}
 .login input{font-size:22px;padding:12px;width:100%;margin:14px 0;border:2px solid var(--ink)}
 .login button{font:700 20px var(--sans);padding:12px 22px;background:var(--teal);color:#fff;border:0}
+/* ---- lab theme ---- */
+:root{--teal:#2FA890;--teal-d:#1B7A68;--teal-l:#D6EFE8;--ink:#0E2A2B;--gray:#4F6B67;--band:#0E2A2B;--line:#C9DDD7;--paper:#EEF6F3;--soft:#E1EEEA;
+  --red:#B5122E;--amber:#C9820A;--slate:#2D4B8E;--rose:#8E2F6B;--serif:'Instrument Serif',Georgia,'Times New Roman',serif;--sans:'Archivo','Arial Narrow',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+.logo{color:#fff;font-stretch:80%}
+.logo i{width:.62em;height:.62em;background:var(--red);border-radius:0 55% 55% 55%;transform:rotate(45deg);margin:0 .12em 0 .1em;vertical-align:.02em}
+html,body{font-family:var(--sans)}
+.topline{display:none}
+header{background:var(--ink);padding:12px 24px}
+.tab{background:transparent;color:#B9D3CD;font-family:var(--sans);font-weight:700;border-radius:99px;min-width:0;padding:8px 20px;font-size:19px}
+.tab.on{background:var(--teal);color:var(--ink)}
+.join{border-radius:14px}
+h1,h2,h3{font-family:var(--sans);font-weight:800;font-stretch:75%;letter-spacing:-.01em}
+h1{font-size:88px;line-height:.98}
+h2{font-size:54px}
+.titlebar{border-left:0;padding-left:0}
+.kicker{letter-spacing:0;text-transform:none;display:inline-block;background:var(--teal-l);color:var(--teal-d);padding:5px 16px;border-radius:99px;font-size:18px}
+.sub{font-family:var(--sans)}
+.motion,.motionbig,.quote,.qtext{font-family:var(--serif);font-weight:400}
+.motion{font-size:60px}.motionbig{font-size:58px}.qtext{font-size:56px;line-height:1.05}
+.quote:before{color:var(--red)}
+body.dark{background:var(--ink)}
+body.dark header{background:#081b1c}
+.bigqr{border:3px solid var(--ink);border-radius:26px;box-shadow:0 10px 0 var(--ink);background:#fff}
+.count{color:var(--red)}
+.chip{border-radius:99px;background:#fff;color:var(--ink);border:2px solid var(--ink)}
+.memo{border-radius:22px;border:2px solid var(--ink);box-shadow:0 8px 0 var(--ink);background:#fff}
+.memo.leak{background:#fff;border-color:var(--ink)}
+.memo li,.memo.leak li{border-top-color:var(--soft)}
+.memo li:before{border-radius:0 55% 55% 55%;transform:rotate(45deg)}
+.stamp{border-radius:10px}
+.bar .track{border-radius:16px;background:#fff;border:2px solid var(--ink)}
+.bar .fill{border-radius:0}
+.concept{background:var(--slate);border-radius:99px;padding:6px 16px}
+.gcard{border:2px solid var(--ink);border-radius:20px;box-shadow:0 6px 0 var(--ink)}
+.gcard .ceo{font-family:var(--sans);font-weight:800;font-stretch:78%;font-size:36px}
+.tok{border-radius:0 55% 55% 55%;transform:rotate(45deg);background:var(--red);margin-right:7px}
+.kind{border-radius:99px;padding:4px 12px}
+.ptab td,.rtable td{background:#fff}
+.truthbox{border-left:0;border-radius:18px;background:#FBE1E6;padding:16px 22px}
+.punch{border-left:0;border-radius:18px;background:#fff;border:2px solid var(--ink);padding:14px 22px;font-family:var(--sans);font-stretch:85%}
+.mech{border:2px solid var(--ink);border-left:2px solid var(--ink);border-radius:18px;background:#fff}
+.card{border:2px solid var(--line);border-top:2px solid var(--line);border-radius:18px}
+.rules3 h3{font-size:36px}
+.stab th{color:var(--ink)}
+.stab td{background:#fff}
+.opt{border-radius:22px;border:3px solid var(--ink)}
+.row .nm{border-radius:12px;overflow:hidden;background:#fff}
+.pod .blk{border-radius:18px 18px 0 0}
+.pod:nth-child(1) .blk,.pod:nth-child(3) .blk{background:var(--ink)}
+.pod:nth-child(2) .blk{background:var(--red)}
+.controls button{border-radius:10px}
+.login input{border-radius:12px}.login button{border-radius:12px}
+.rules{font-family:var(--sans)}
 </style>
 </head>
 <body>
@@ -355,7 +408,7 @@ const views = {
     return `${titlebar('Activity #1 · The Pitch', 'CEO vs. the Board', 'One person in each group becomes CEO. Everyone else is the board.')}
       <div class="rules3 fade">
         <div><h3>The CEO</h3><ul><li>Each round, picks one of three claims: <b>honest</b>, <b>exaggerated</b> or a <b>lie</b></li><li>Reads it aloud to the board, with confidence</li><li>Less true pays more, if the board believes it</li></ul></div>
-        <div><h3>The Board</h3><ul><li>Votes <b>Believe</b> or <b>Challenge</b> on their phones</li><li>Has ${C.verifyTokens} <b>verify</b> tokens for the whole game: spend one to see the truth</li><li>Ties go to the CEO</li></ul></div>
+        <div><h3>The Board</h3><ul><li>Votes <b>Believe</b> or <b>Challenge</b> on their phones</li><li>Has ${C.verifyTokens} <b>lab tests</b> for the whole game: run one to see the truth</li><li>Ties go to the CEO</li></ul></div>
         <div><h3>Scoring <span style="font-size:18px;color:var(--gray);font-weight:400">(CEO / Board)</span></h3>
           <table class="stab"><tr><th></th><th>Believed</th><th>Challenged</th></tr>${row('honest', 'Honest')}${row('exaggeration', 'Exaggeration')}${row('lie', 'Lie')}</table>
           <div class="sub" style="font-size:20px;margin-top:10px">${C.pitchRoundCount} rounds, with a surprise in the middle.</div></div>
@@ -370,16 +423,16 @@ const views = {
     const r = S.round;
     const head = titlebar(`Activity #1 · Round ${r.number} of ${r.total}`, esc(r.topic), {
       pick: 'CEOs: pick a card on your phone, then read it aloud to your board.',
-      decide: 'Boards: Believe or Challenge on your phones. Verifying costs a token.',
+      decide: 'Boards: Believe or Challenge on your phones. Running a lab test costs one drop.',
       reveal: 'Here’s what every CEO told their board.',
     }[r.stage]);
     if (r.stage !== 'reveal') {
       return `${head}<div class="gcards">${S.pitchGroups.map((g) => {
         const st = r.stage === 'pick'
           ? (g.picked ? '<div class="st ok">✓ Pitch chosen</div>' : '<div class="st wait">Choosing…</div>')
-          : `<div class="st ${g.voted >= g.boardSize ? 'ok' : 'wait'}">${g.voted} of ${g.boardSize} voted${g.verified ? ' · verified' : ''}</div>`;
+          : `<div class="st ${g.voted >= g.boardSize ? 'ok' : 'wait'}">${g.voted} of ${g.boardSize} voted${g.verified ? ' · tested' : ''}</div>`;
         return `<div class="gcard"><div class="g">${esc(g.group)}</div><div class="ceo">${esc(g.ceo)}</div>
-          <div class="meta">${tokens(g.tokens)} verify left${g.immune ? ' · <b style="color:var(--red)">CEO immune</b>' : ''}</div>${st}</div>`;
+          <div class="meta">${tokens(g.tokens)} tests left${g.immune ? ' · <b style="color:var(--red)">CEO immune</b>' : ''}</div>${st}</div>`;
       }).join('')}</div>`;
     }
     const lie = r.cards.find((c) => c.kind === 'lie');
