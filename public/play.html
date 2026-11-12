@@ -310,7 +310,8 @@ const V = {
     const p = S.me.pitch;
     return `<div class="center"><div class="kicker">Activity #1 · Results</div><h2>${p.role === 'ceo' ? 'Your CEO score' : 'Your board’s score'}</h2><div class="big">${p.teamPoints > 0 ? '+' : ''}${p.teamPoints}</div><p>Check the big screen for the rankings.</p></div>`;
   },
-  pitchTruth: () => wait('What Theranos really said', 'Every lie card was a real claim to investors. Watch the screen.'),
+  pitchTruth: () => wait('Every lie card was real', 'Two came from Theranos and two from other companies. Watch the screen.'),
+  slidesBreak: () => wait('Phones down for now', 'Back to the presentation. Keep this page open: you’ll need it for the final quiz.'),
   paperBreak: () => wait('Phones down for Activity #2', 'It’s on paper with your group. Keep this page open; the final quiz comes back here.'),
   profiles: () => `<div class="kicker">Activity #2 · You have $10M</div><h2>Study the four companies</h2><p>Investing opens next. Names are disguised; judge them with the lecture’s Deep Dive lenses.</p>
     ${C.companyOrder.map((k) => coCard(k, false)).join('')}`,

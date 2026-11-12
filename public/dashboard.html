@@ -121,7 +121,7 @@ function statusLine() {
   if (ph.type === 'superVote') return `Surprise proposal · ${D.superStage === 'decide' ? 'Boards voting' : 'Reveal'}`;
   return {
     lobby: 'Players joining', vote: 'Warm-up poll', pitchRules: 'Explaining the rules', ceoAssign: 'CEOs assigned',
-    pitchStandings: 'Activity #1 results', pitchTruth: 'What Theranos really said', callback: 'Back to lecture',
+    pitchStandings: 'Activity #1 results', pitchTruth: 'The real claims', slidesBreak: 'Back to the slides', callback: 'Back to lecture',
     paperBreak: 'Activity #2 (on paper)', quizIntro: 'Quiz starting', quiz: 'Lightning quiz', final: 'Final results',
   }[ph.type] || ph.id;
 }

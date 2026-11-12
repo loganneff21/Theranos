@@ -441,7 +441,7 @@ const views = {
         <td><span class="kind ${g.result.kind}">${esc(kindName(g.result.kind))}</span> <span style="font-size:17px">${esc(g.result.text)}</span></td>
         <td>${g.result.decision === 'believe' ? 'Believed' : 'Challenged'}${g.result.verified ? ' <span style="color:var(--gray);font-size:15px">(verified)</span>' : ''}</td>
         <td class="num ${cls(g.result.ceo)}">${fmt(g.result.ceo)}${g.result.immune && g.result.kind !== 'honest' && g.result.decision === 'challenge' ? '<div style="font-size:12px;color:var(--red)">immune</div>' : ''}</td><td class="num ${cls(g.result.board)}">${fmt(g.result.board)}</td></tr>`).join('')}</table>
-      <div class="truthbox"><b>What really happened</b>Theranos told investors: “${esc(lie.text)}” ${esc(r.truth)}</div>`;
+      <div class="truthbox"><b>What really happened at ${esc(r.company)}</b>${esc(r.said)}: “${esc(lie.text)}” ${esc(r.truth)}</div>`;
   },
   superVote: () => {
     const sv = S.superVote;
@@ -465,9 +465,11 @@ const views = {
       <div class="final"><div><div class="kicker">Top CEOs</div><div class="board" style="margin-top:12px">${S.ceoBoard.map((g, i) => lrow(i + 1, g.ceo, g.group, fmt(g.total.ceo), Math.max(0, g.total.ceo) / maxC, i)).join('')}</div></div>
       <div><div class="kicker">Top Boards</div><div class="board" style="margin-top:12px">${S.boardBoard.map((g, i) => lrow(i + 1, g.group, g.boardSize + (g.boardSize === 1 ? ' member' : ' members'), fmt(g.total.board), Math.max(0, g.total.board) / maxB, i)).join('')}</div></div></div>`;
   },
-  pitchTruth: () => `${titlebar('Activity #1 · The real Theranos', 'What Theranos actually told investors', 'Every lie card in the game was a real claim. Source: SEC complaint against Holmes and Balwani (2018).')}
-      <table class="ptab">${S.truths.map((t, i) => `<tr style="animation-delay:${0.3 + i * 0.6}s"><td style="width:13%"><b>${esc(t.topic)}</b></td><td style="width:40%;font-family:var(--serif);font-size:26px">“${esc(t.lie)}”</td><td style="font-size:20px">${esc(t.truth)}</td></tr>`).join('')}</table>
+  pitchTruth: () => `${titlebar('Activity #1 · These were real', 'Every lie card was a real claim', 'Two from Theranos, two from other companies whose boards missed it too.')}
+      <table class="ptab">${S.truths.map((t, i) => `<tr style="animation-delay:${0.3 + i * 0.6}s"><td style="width:13%"><b>${esc(t.company)}</b></td><td style="width:40%;font-family:var(--serif);font-size:26px">“${esc(t.lie)}”</td><td style="font-size:20px">${esc(t.truth)}</td></tr>`).join('')}</table>
       <div class="punch fade" style="animation-delay:3s">${S.superApproved} of ${S.pitchGroups.length} of your boards gave their CEO 99.7% of the votes. The real board did too.</div>`,
+  slidesBreak: () => `<div class="big-center"><div><div class="kicker">Back to the presentation</div><h1>Phones down for now</h1>
+     <div class="rules">Next: how Theranos’s board actually failed.<br>Keep this page open on your phone. You’ll need it again for the final quiz.</div></div></div>`,
   paperBreak: () => `<div class="big-center"><div><div class="kicker">Activity #2 · Phones down</div><h1>You have $10 million</h1>
      <div class="rules">Activity #2 is on paper. Grab your group's packet.<br><b>Four disguised companies</b> · <b>split $10M</b> · <b>max $5M each</b><br>Use the lecture's Governance Deep Dive lenses. Keep this tab open: we'll be back for the final quiz.</div></div></div>`,
   profiles: () => `${titlebar('Activity #2 · You have $10 million', 'Four companies want your money', 'Names are hidden. Governance isn’t. Read them through the lecture’s Deep Dive lenses; investing opens next.')}
@@ -558,7 +560,7 @@ const patch = {
     const v = $('#voted'); if (v) v.textContent = `${S.quiz.answered} of ${S.players} answered`;
   },
   packetB: () => {}, packetA: () => {}, pitch: () => {}, profiles: () => {}, companyReveal: () => {},
-  boardReveal: () => {}, callback: () => {}, paperBreak: () => {}, pitchRules: () => {}, pitchTruth: () => {}, pitchStandings: () => {},
+  boardReveal: () => {}, callback: () => {}, paperBreak: () => {}, slidesBreak: () => {}, pitchRules: () => {}, pitchTruth: () => {}, pitchStandings: () => {},
   ceoAssign: () => liveRedraw('ceoAssign'), pitchRound: () => { if (S.round.stage !== 'reveal') liveRedraw('pitchRound'); }, superVote: () => { if (S.superVote.stage === 'decide') liveRedraw('superVote'); }, portfolio: () => {}, quizIntro: () => {}, final: () => {},
 };
 
