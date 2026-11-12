@@ -276,7 +276,8 @@ const superMotion = {
   real: 'The real Theranos board approved it. After that, the board could not hold Holmes accountable: she controlled the votes that elect the board.',
 };
 
-// The run of show. The host's Next button walks this list.
+// The run of show. The host's Next button walks this list. The phone game covers Activity #1 only;
+// Activity #2 is on paper. (The old phone versions of Activity #2 and the quiz are in git history.)
 const phases = [
   { id: 'lobby', type: 'lobby', section: 'Join' },
   { id: 'w0', type: 'vote', motion: 0, section: 'Activity #1' },
@@ -290,21 +291,6 @@ const phases = [
   { id: 'standings', type: 'pitchStandings', section: 'Activity #1' },
   { id: 'truth', type: 'pitchTruth', section: 'Activity #1' },
   { id: 'callback', type: 'callback', section: 'Activity #1' },
-  // Activity #2 runs on paper in class. Set ACTIVITY2_ON_PHONES to true to play it on phones instead.
-  ...(ACTIVITY2_ON_PHONES
-    ? [
-        { id: 'profiles', type: 'profiles', section: 'Activity #2' },
-        { id: 'invest', type: 'invest', section: 'Activity #2' },
-        ...revealOrder.map((c) => ({ id: 'reveal' + c, type: 'companyReveal', company: c, section: 'Activity #2' })),
-        { id: 'portfolio', type: 'portfolio', section: 'Activity #2' },
-      ]
-    : [
-        { id: 'slidesBreak', type: 'slidesBreak', section: 'Theranos Fraud' },
-        { id: 'paperBreak', type: 'paperBreak', section: 'Activity #2' },
-      ]),
-  { id: 'quizIntro', type: 'quizIntro', section: 'Quiz' },
-  ...quiz.map((_, i) => ({ id: 'q' + (i + 1), type: 'quiz', q: i, section: 'Quiz' })),
-  { id: 'final', type: 'final', section: 'Results' },
 ];
 
 module.exports = { ACTIVITY2_ON_PHONES, pitchRounds, kindLabel, pitchPoints, verifyTokens, pointsScale, superAfter, superMotion, motions, packetA, pitch, packetB, lenses, companies, companyOrder, revealOrder, quiz, scoring, groups, phases };
