@@ -65,7 +65,11 @@ function advanceRound(game, r) {
       let [ceo, board] = C.pitchPoints[card.kind][decision];
       const immune = groupState(game, g).immune;
       if (immune && ceo < 0) ceo = 0;
-      round.results[g] = { card: round.picks[g], kind: card.kind, decision, counts, verified: !!round.verified[g], ceo, board, immune };
+      // A united board (everyone voted, all the same way) that gets it right earns a bonus.
+      const members = boardOf(game, g);
+      const united = members.length >= 2 && members.every((p) => round.votes[p.pid] === decision) && board > 0;
+      if (united) board += C.unanimousBonus;
+      round.results[g] = { card: round.picks[g], kind: card.kind, decision, counts, verified: !!round.verified[g], ceo, board, immune, united };
     });
     round.stage = 'reveal';
     return true;
@@ -229,6 +233,12 @@ function meView(game, p, ph) {
       out.claim = def.cards[pickIdx].text;
       out.myVote = round.votes[p.pid] || null;
       out.verified = !!round.verified[p.group];
+      if (round.stage === 'decide') {
+        const b = boardOf(game, p.group);
+        const believe = b.filter((m) => round.votes[m.pid] === 'believe').length;
+        const challenge = b.filter((m) => round.votes[m.pid] === 'challenge').length;
+        out.lean = { believe, challenge, waiting: b.length - believe - challenge, size: b.length };
+      }
       if (out.verified) out.truthLabel = C.kindLabel[def.cards[pickIdx].kind];
     }
     if (round.stage === 'reveal') {

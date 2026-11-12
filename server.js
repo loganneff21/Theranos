@@ -449,6 +449,7 @@ app.get('/content.json', (req, res) => {
     scoring: C.scoring,
     pitchRoundCount: C.pitchRounds.length,
     verifyTokens: C.verifyTokens,
+    unanimousBonus: C.unanimousBonus,
     pitchPoints: C.pitchPoints,
     superMotion: C.superMotion,
     superAfter: C.superAfter,

@@ -265,7 +265,8 @@ const pitchPoints = {
   exaggeration: { believe: [2, -1], challenge: [-2, 1] },
   lie: { believe: [3, -2], challenge: [-3, 2] },
 };
-const verifyTokens = 3; // per board, for the whole game
+const verifyTokens = 3;
+const unanimousBonus = 1; // extra board point when every board member votes the same way and the board is right // per board, for the whole game
 const pointsScale = 100; // pitch points x 100 go on each player's game total
 
 const superAfter = 3; // the 99.7% vote comes after this many rounds
@@ -293,4 +294,4 @@ const phases = [
   { id: 'callback', type: 'callback', section: 'Activity #1' },
 ];
 
-module.exports = { ACTIVITY2_ON_PHONES, pitchRounds, kindLabel, pitchPoints, verifyTokens, pointsScale, superAfter, superMotion, motions, packetA, pitch, packetB, lenses, companies, companyOrder, revealOrder, quiz, scoring, groups, phases };
+module.exports = { ACTIVITY2_ON_PHONES, pitchRounds, kindLabel, pitchPoints, verifyTokens, unanimousBonus, pointsScale, superAfter, superMotion, motions, packetA, pitch, packetB, lenses, companies, companyOrder, revealOrder, quiz, scoring, groups, phases };
