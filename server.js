@@ -21,6 +21,7 @@ const pub = path.join(__dirname, 'public');
 app.get('/', (req, res) => res.redirect('/play'));
 app.get('/play', (req, res) => res.sendFile(path.join(pub, 'play.html')));
 app.get('/host', (req, res) => res.sendFile(path.join(pub, 'host.html')));
+app.get('/dashboard', (req, res) => res.sendFile(path.join(pub, 'dashboard.html')));
 app.use(express.static(pub));
 
 function joinUrl(req) {
@@ -248,11 +249,27 @@ function broadcast() {
     pending = null;
     const s = publicState();
     io.to('host').emit('state', { ...s, hostView: hostExtras() });
+    io.to('dash').emit('dash', dashState());
     game.players.forEach((p) => {
       const me = meState(p);
       p.sockets.forEach((sid) => io.to(sid).emit('state', { ...s, me }));
     });
   }, 150);
+}
+
+function dashState() {
+  const ph = phase();
+  return {
+    now: Date.now(),
+    phase: ph,
+    phaseIndex: game.phaseIndex,
+    phaseCount: C.phases.length,
+    round: ph.type === 'pitchRound' ? { number: ph.round + 1, total: C.pitchRounds.length, topic: C.pitchRounds[ph.round].topic, stage: game.pitch.rounds[ph.round].stage } : null,
+    superStage: ph.type === 'superVote' ? game.pitch.super.stage : null,
+    players: game.players.size,
+    online: connectedCount(),
+    groups: P.dashboardView(game, ph),
+  };
 }
 
 function hostExtras() {
@@ -296,6 +313,14 @@ io.on('connection', (socket) => {
     socket.join('host');
     ack && ack({ ok: true });
     socket.emit('state', { ...publicState(), hostView: hostExtras() });
+  });
+
+  // View-only dashboard: same key as the projector, but it can't change anything.
+  socket.on('dash:auth', (key, ack) => {
+    if (key !== HOST_KEY && !onThisLaptop) return ack && ack({ ok: false });
+    socket.join('dash');
+    ack && ack({ ok: true });
+    socket.emit('dash', dashState());
   });
 
   socket.on('host:next', () => {

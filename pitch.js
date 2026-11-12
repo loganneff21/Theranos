@@ -247,4 +247,42 @@ function meView(game, p, ph) {
   return out;
 }
 
-module.exports = { freshPitch, assignCeos, advanceRound, advanceSuper, totals, playerPoints, pick, vote, verify, superVote, publicView, meView, roleOf };
+
+// Everything a teammate needs to watch all groups at once. Card choices stay hidden until each reveal.
+function dashboardView(game, ph) {
+  const t = totals(game);
+  const groups = groupsInPlay(game);
+  const cur = ph.type === 'pitchRound' ? ph.round : null;
+  return groups.map((g) => {
+    const ceoPid = game.pitch.ceos[g];
+    const members = membersOf(game, g);
+    const board = ceoPid ? boardOf(game, g) : members;
+    const gs = game.pitch.groups[g] || { tokens: C.verifyTokens, immune: false };
+    const rounds = game.pitch.rounds.map((round, r) => {
+      const started = round.stage !== 'pick' || Object.keys(round.picks).length > 0 || cur === r;
+      const base = { topic: C.pitchRounds[r].topic, stage: started ? round.stage : 'upcoming', current: cur === r };
+      if (!ceoPid || !started) return base;
+      if (round.stage === 'reveal' && round.results && round.results[g]) {
+        const res = round.results[g];
+        return { ...base, kind: res.kind, decision: res.decision, verified: res.verified, ceo: res.ceo, board: res.board };
+      }
+      return { ...base, picked: round.picks[g] !== undefined, voted: board.filter((p) => round.votes[p.pid]).length, boardSize: board.length, verified: !!round.verified[g] };
+    });
+    const sv = game.pitch.super;
+    const superView = sv.stage === 'reveal' && sv.results && sv.results[g]
+      ? { stage: 'reveal', decision: sv.results[g].decision }
+      : { stage: ph.type === 'superVote' ? 'decide' : (sv.stage === 'reveal' ? 'reveal' : 'upcoming'), voted: board.filter((p) => sv.votes[p.pid]).length, boardSize: board.length };
+    return {
+      group: g,
+      ceo: ceoPid ? { name: nameOf(game, ceoPid), online: (game.players.get(ceoPid) || { sockets: new Set() }).sockets.size > 0 } : null,
+      members: members.map((m) => ({ name: m.name, online: m.sockets.size > 0, ceo: m.pid === ceoPid })),
+      tokens: gs.tokens,
+      immune: gs.immune,
+      totals: t[g] || { ceo: 0, board: 0 },
+      rounds,
+      super: superView,
+    };
+  });
+}
+
+module.exports = { dashboardView, freshPitch, assignCeos, advanceRound, advanceSuper, totals, playerPoints, pick, vote, verify, superVote, publicView, meView, roleOf };
