@@ -190,11 +190,11 @@ const pitchRounds = [
     company: 'Theranos',
     said: 'Theranos told investors',
     cards: [
-      { kind: 'honest', text: 'The Department of Defense has used our technology in a burn study.' },
-      { kind: 'exaggeration', text: 'We have Defense Department contracts that will bring in future revenue.' },
-      { kind: 'lie', text: 'Our technology is deployed on the battlefield in Afghanistan and on medevac helicopters.' },
+      { kind: 'honest', text: 'The military has not deployed our technology yet.' },
+      { kind: 'exaggeration', text: 'The military is very interested in what we’re building.' },
+      { kind: 'lie', text: 'Our products are deployed on the battlefield in Afghanistan and on medevac helicopters.' },
     ],
-    truth: 'It was used in one Defense Department burn study, never on the battlefield or medevac helicopters. Theranos earned about $300,000 from three Defense contracts over four years.',
+    truth: 'According to the SEC’s 2018 complaint, Theranos’s technology was never deployed by the Department of Defense.',
   },
   {
     // Not Theranos: the same governance failure at an electric-truck startup.
@@ -204,9 +204,9 @@ const pitchRounds = [
     cards: [
       { kind: 'honest', text: 'Our truck prototype can’t drive under its own power yet.' },
       { kind: 'exaggeration', text: 'Our prototype is nearly ready for the road.' },
-      { kind: 'lie', text: 'This is a real, fully functioning truck. It is not a pusher.' },
+      { kind: 'lie', text: 'The Nikola One is a fully functioning prototype.' },
     ],
-    truth: 'The truck could not drive. A later promo video of it “in motion” was filmed by rolling it down a hill. Founder Trevor Milton was convicted of fraud in 2022 and sentenced to four years.',
+    truth: 'At its 2016 launch the truck was missing gears and motors and was powered by an external battery. A later promo video of it “in motion” was filmed by rolling it down a hill. Founder Trevor Milton was convicted of fraud in 2022 and sentenced to four years; he was pardoned in March 2025.',
   },
   {
     // Not Theranos: a big public bank whose board missed it for years.
@@ -225,11 +225,11 @@ const pitchRounds = [
     company: 'Theranos',
     said: 'Theranos told investors',
     cards: [
-      { kind: 'honest', text: 'We are losing about $8–9 million a month right now.' },
-      { kind: 'exaggeration', text: 'Most of our revenue comes from the military.' },
-      { kind: 'lie', text: 'We will book over $100 million in revenue this year.' },
+      { kind: 'honest', text: 'Our revenue so far is small: about $100,000 this year.' },
+      { kind: 'exaggeration', text: 'Our revenue is about to take off once we roll out nationwide.' },
+      { kind: 'lie', text: 'We will generate more than $100 million in revenue this year.' },
     ],
-    truth: 'Investor binders projected over $100 million in 2014 revenue. Theranos actually brought in a little more than $100,000.',
+    truth: 'According to the SEC, Theranos told investors it would generate more than $100 million in 2014 revenue. It actually generated a little more than $100,000.',
   },
   {
     // Not Theranos: the classic case of a board that waived its own rules.
@@ -241,7 +241,7 @@ const pitchRounds = [
       { kind: 'exaggeration', text: 'Our partnerships are disclosed in our financial statements.' },
       { kind: 'lie', text: 'Enron stock is an incredible bargain right now.' },
     ],
-    truth: 'In September 2001 Ken Lay called the stock an incredible bargain. Weeks later Enron cut its past profits by $586 million because partnerships run by its CFO had hidden losses and debt. It went bankrupt in December 2001.',
+    truth: 'On September 26, 2001, Ken Lay called the stock an incredible bargain. Weeks later Enron cut its past profits by $586 million because partnerships run by its CFO had hidden losses and debt. It went bankrupt in December 2001.',
   },
   {
     // Not Theranos: a giant public company with a board that missed it too.
@@ -251,7 +251,7 @@ const pitchRounds = [
     cards: [
       { kind: 'honest', text: 'Our diesel cars can’t meet US emissions limits in normal driving.' },
       { kind: 'exaggeration', text: 'Our diesels are among the cleanest cars on the road.' },
-      { kind: 'lie', text: 'Our clean diesel engines meet the strictest emissions standards.' },
+      { kind: 'lie', text: 'Our Clean Diesel cars are low-emission and meet emissions standards.' },
     ],
     truth: 'About 11 million cars carried software that cheated emissions tests. On the road they emitted up to 40 times the US limit. Volkswagen admitted it in 2015.',
   },
