@@ -170,7 +170,7 @@ function publicView(game, ph) {
     const r = ph.round;
     const round = game.pitch.rounds[r];
     const def = C.pitchRounds[r];
-    const view = { round: { index: r, number: r + 1, total: C.pitchRounds.length, topic: def.topic, stage: round.stage } };
+    const view = { round: { index: r, number: r + 1, total: C.pitchRounds.length, topic: def.topic, company: def.company, stage: round.stage } };
     view.pitchGroups = groupRows(game, (g) => {
       const board = boardOf(game, g);
       return {
