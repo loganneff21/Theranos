@@ -265,7 +265,7 @@ const V = {
   },
   pitchRound: () => {
     const p = S.me.pitch, r = S.round;
-    const head = `<div class="kicker">Round ${r.number} of ${r.total}: ${esc(r.topic)}</div>`;
+    const head = `<div class="kicker">Round ${r.number} of ${r.total}: ${esc(r.company)} · ${esc(r.topic)}</div>`;
     if (p.role === 'solo') return head + wait('Sit this round out', 'Your group needs at least two people.');
     if (r.stage === 'reveal' && p.result) {
       const res = p.result, mine = res.mine;
@@ -281,7 +281,7 @@ const V = {
     }
     if (p.role === 'ceo') {
       if (r.stage === 'pick') {
-        return `${head}<h2>What will you tell your board?</h2><p>Tap a card. You can change it until the host moves on.</p>
+        return `${head}<h2>You’re the CEO of ${esc(r.company)}. What will you tell your board?</h2><p>Tap a card. You can change it until the host moves on.</p>
           ${p.cards.map((c, i) => `<button class="pcard ${p.picked === i ? 'on' : ''}" data-i="${i}"><span class="lab ${c.kind}">${esc(c.label)}</span>
             <div class="tx">${esc(c.text)}</div><div class="pts">If believed: ${sign(c.ifBelieved)} · If challenged: ${sign(c.ifChallenged)}${p.immune && c.ifChallenged < 0 ? ' (immune: 0)' : ''}</div></button>`).join('')}
           ${p.picked !== null ? '<div class="ok" style="margin-top:12px">✓ Now read it aloud to your board.</div>' : ''}`;
@@ -289,7 +289,7 @@ const V = {
       const c = p.cards[p.picked];
       return `${head}<h2>Your board is deciding…</h2><div class="claim">${esc(c.text)}</div><p>Hold your poker face.${p.immune ? ' You’re immune: getting caught costs you nothing.' : ''}</p>`;
     }
-    if (r.stage === 'pick') return head + wait(`${p.ceoName} is choosing what to tell you…`, 'Listen closely when they pitch.');
+    if (r.stage === 'pick') return head + wait(`You’re on the board of ${esc(r.company)}. ${p.ceoName} is choosing what to tell you…`, 'Listen closely when they pitch.');
     return `${head}<div class="muted">${esc(p.ceoName)} says:</div><div class="claim">${esc(p.claim)}</div>
       ${p.verified ? `<div class="truthtag lab ${p.truthLabel.toLowerCase()}">Test result: ${p.truthLabel === 'Honest' ? 'honest' : p.truthLabel === 'Lie' ? 'a lie' : 'an exaggeration'}</div>` : ''}
       <div id="lean">${leanHtml(p)}</div>

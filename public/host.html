@@ -421,8 +421,8 @@ const views = {
   },
   pitchRound: () => {
     const r = S.round;
-    const head = titlebar(`Activity #1 · Round ${r.number} of ${r.total}`, esc(r.topic), {
-      pick: 'CEOs: pick a card on your phone, then read it aloud to your board.',
+    const head = titlebar(`Activity #1 · Round ${r.number} of ${r.total}`, esc(r.company) + ': ' + esc(r.topic), {
+      pick: `Every CEO is now the CEO of ${esc(r.company)}. Pick a card on your phone, then read it aloud to your board.`,
       decide: 'Boards: Believe or Challenge on your phones. Running a lab test costs one drop.',
       reveal: 'Here’s what every CEO told their board.',
     }[r.stage]);
