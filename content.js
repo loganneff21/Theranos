@@ -187,7 +187,7 @@ const groups = ['Board 1', 'Board 2', 'Board 3', 'Board 4', 'Board 5', 'Board 6'
 const pitchRounds = [
   {
     topic: 'Military',
-    briefing: 'Theranos is a private blood-testing startup. It says its device can run many tests from a few drops of blood, and it is opening testing centers inside Walgreens stores. Device details are kept confidential as trade secrets.',
+    briefing: 'It is 2013. Theranos is a private blood-testing startup. It says its device can run many tests from a few drops of blood, and it is opening testing centers inside Walgreens stores. It has also been pitching the device to the US military. Device details are kept secret.',
     ask: ['Which military units use it, and where?', 'Can we see a contract or a report from the military?'],
     company: 'Theranos',
     said: 'Theranos told investors',
@@ -201,7 +201,7 @@ const pitchRounds = [
   {
     // Not Theranos: the same governance failure at an electric-truck startup.
     topic: 'The electric truck',
-    briefing: 'It is December 2016. Nikola, a startup building hydrogen-electric semi trucks, is unveiling its first prototype, the Nikola One, at a launch event in Salt Lake City. It says buyers have placed billions of dollars in preorders. Production is years away.',
+    briefing: 'It is December 2016. Nikola, a startup building hydrogen-electric semi trucks, is unveiling its first prototype, the Nikola One, on stage. It says buyers have placed billions in preorders. Skeptics ask if the truck really runs or is a “pusher”: a shell that has to be pushed or towed.',
     ask: ['Has the truck driven under its own power?', 'Can we see it drive, not just sit on a stage?'],
     company: 'Nikola',
     said: 'Nikola’s founder told the public',
@@ -215,7 +215,7 @@ const pitchRounds = [
   {
     // Not Theranos: a big public bank whose board missed it for years.
     topic: 'Cross-selling',
-    briefing: 'Wells Fargo is one of the largest US banks. Its strategy is cross-selling: getting existing customers to use more of its products, like a credit card or a second account. Investors reward it for how many products each household holds.',
+    briefing: 'It is 2015. Wells Fargo is one of the largest US banks. Its strategy is cross-selling: getting existing customers to use more of its products, like a credit card or a second account. Investors reward it for how many products each household holds.',
     ask: ['How do you know customers wanted and use these accounts?', 'What happens to employees who miss their sales goals?'],
     company: 'Wells Fargo',
     said: 'Wells Fargo told investors',
@@ -242,8 +242,8 @@ const pitchRounds = [
   {
     // Not Theranos: the classic case of a board that waived its own rules.
     topic: 'The energy giant',
-    briefing: 'It is September 2001. Enron is one of America’s largest energy companies. In August its CEO, Jeff Skilling, quit after about six months, citing personal reasons, and Chairman Ken Lay took the job back. The stock has fallen by more than half from its high of about $90.',
-    ask: ['Why did the CEO really leave?', 'What exactly is in the partnerships the CFO runs?'],
+    briefing: 'It is September 2001. Enron is one of America’s largest energy companies. In August its CEO quit after six months, citing personal reasons, and Chairman Ken Lay took the job back. The stock has fallen by more than half. Analysts say its deals with outside partnerships are hard to understand.',
+    ask: ['Why did the CEO really leave?', 'What is in those partnerships, and who runs them?'],
     company: 'Enron',
     said: 'Enron’s CEO told employees',
     cards: [
@@ -256,7 +256,7 @@ const pitchRounds = [
   {
     // Not Theranos: a giant public company with a board that missed it too.
     topic: 'Clean engines',
-    briefing: 'Volkswagen sells its diesel cars in the US as a cleaner, fuel-efficient choice under the name “Clean Diesel.” Diesel engines normally produce more nitrogen oxide (NOx) pollution than gasoline engines, which makes strict US limits hard to meet.',
+    briefing: 'It is 2014. Volkswagen sells its diesel cars in the US as a cleaner, fuel-efficient choice called “Clean Diesel.” Diesel engines normally produce more nitrogen oxide (NOx) pollution than gasoline engines, which makes strict US limits hard to meet.',
     ask: ['How do your diesels meet US limits when that’s so hard for diesel engines?', 'Have they been tested on the road, not just in the lab?'],
     company: 'Volkswagen',
     said: 'Volkswagen advertised',
