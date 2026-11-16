@@ -264,19 +264,142 @@ body.dark header{background:#081b1c}
 .controls button{border-radius:10px}
 .login input{border-radius:12px}.login button{border-radius:12px}
 .rules{font-family:var(--sans)}
+
+/* ---- boardroom stage (v3) ----
+   The projector is a boardroom: you look down the table at the screen on the far wall.
+   Everything renders on a fixed 1920x1080 stage that scales to any projector. */
+html,body{background:#071718;overflow:hidden}
+body{display:block}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform:translate(-50%,-50%) scale(var(--k,1));transform-origin:50% 50%}
+#scene{position:absolute;inset:0;z-index:0}
+#scene svg{display:block;width:1920px;height:1080px}
+header{position:absolute;left:0;right:0;top:0;height:104px;z-index:2;background:transparent;padding:0 160px;display:flex;align-items:center}
+.logo{font-size:34px;color:#fff}
+.join{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.join img{width:66px;height:66px}
+.join b{font-size:17px}.join small{font-size:14px}
+main{position:absolute;left:160px;top:104px;width:1600px;height:752px;z-index:1;padding:40px 60px 34px;overflow:hidden;
+  background:linear-gradient(180deg,#F7FBFA 0%,#EDF6F3 100%);border-radius:26px;
+  box-shadow:0 0 0 2px #0a2223,0 0 0 9px #163b3b,0 30px 80px rgba(0,0,0,.55),0 0 160px rgba(47,168,144,.22)}
+main:before{content:'';position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(90deg,var(--teal),#7fd8c4,var(--teal));opacity:.9}
+.controls{z-index:5}
+/* round tracker: six drops, filled as rounds are played */
+.rounds{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:18px;color:#B9D3CD;font-weight:700;font-size:18px}
+.rounds .dots{display:flex;gap:14px;align-items:center}
+.rd{width:20px;height:20px;border-radius:0 55% 55% 55%;transform:rotate(45deg);border:2px solid #4f7a74;background:transparent}
+.rd.done{background:var(--red);border-color:var(--red)}
+.rd.now{background:#fff;border-color:#fff;box-shadow:0 0 0 6px rgba(255,255,255,.15);animation:beat 1.6s ease-in-out infinite}
+.rd.sup{width:12px;height:12px;border-radius:50%;transform:none;border-color:#c9820a}
+.rd.sup.done{background:#c9820a}
+@keyframes beat{0%,100%{transform:rotate(45deg) scale(1)}50%{transform:rotate(45deg) scale(1.18)}}
+/* shared type on the screen */
+.titlebar{margin-bottom:22px}
+h2{font-size:58px;line-height:1.02}
+.sub{font-size:25px;color:var(--gray);margin-top:8px;max-width:1500px}
+.kicker{font-size:19px;padding:6px 18px}
+/* lobby */
+.lobby{grid-template-columns:auto 1fr;gap:70px;padding:10px 20px}
+.bigqr{width:430px;padding:18px;position:relative}
+.bigqr:after{content:'';position:absolute;right:-18px;top:-18px;width:46px;height:46px;background:var(--red);border-radius:0 55% 55% 55%;transform:rotate(45deg);border:3px solid var(--ink)}
+.lobby h1{font-size:110px}
+.count{font-size:120px}
+.chips{max-height:220px;gap:12px}
+.chip{font-size:21px;padding:9px 18px;font-weight:700}
+/* group seats */
+.gcards{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.gcard{border-radius:22px;padding:20px 22px;position:relative;background:#fff}
+.gcard .g{font-size:15px}
+.gcard .ceo{font-size:44px;line-height:1}
+.gcard .meta{font-size:18px;margin-top:6px}
+.gcard .st{font-size:22px}
+.gcard.ok{border-color:var(--teal-d);box-shadow:0 6px 0 var(--teal-d)}
+.gcard .chk{position:absolute;right:18px;top:18px;width:38px;height:38px;border-radius:50%;background:var(--teal);display:grid;place-items:center;color:var(--ink);font-weight:900;font-size:22px;animation:pop .35s ease both}
+.ceoseat .ceo{font-size:52px;margin-top:6px}
+.ceoseat .badge{display:inline-block;margin-top:12px;background:var(--red);color:#fff;font-weight:800;font-size:16px;padding:5px 14px;border-radius:99px}
+/* a round: case file on the left, the boards on the right */
+.roundgrid{display:grid;grid-template-columns:1.3fr 1fr;gap:34px;align-items:start}
+.casefile{position:relative;background:#fff;border:2px solid var(--ink);border-radius:22px;box-shadow:0 8px 0 var(--ink);padding:26px 30px 24px}
+.casefile .tabk{position:absolute;left:28px;top:-17px;background:var(--ink);color:#fff;font-weight:800;font-size:16px;padding:6px 16px;border-radius:10px 10px 0 0}
+.casefile p{font-family:var(--serif);font-size:37px;line-height:1.2;color:var(--ink)}
+.casefile .askh{margin-top:20px;padding-top:16px;border-top:2px dashed var(--line);font-weight:800;font-size:16px;color:var(--teal-d)}
+.casefile ol{list-style:none;margin-top:8px;counter-reset:q}
+.casefile li{counter-increment:q;font-size:26px;line-height:1.3;font-weight:600;padding:6px 0 6px 46px;position:relative}
+.casefile li:before{content:counter(q);position:absolute;left:0;top:5px;width:32px;height:32px;border-radius:50%;background:var(--teal-l);color:var(--teal-d);font-weight:900;font-size:17px;display:grid;place-items:center}
+.seats{display:grid;gap:12px}
+.seat{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px 14px;background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 20px}
+.seat.ok{border-color:var(--teal-d);background:#F1FAF7}
+.seat .g{font-size:14px;font-weight:700;color:var(--gray);letter-spacing:.08em;text-transform:uppercase}
+.seat .ceo{font-size:36px;font-weight:800;font-stretch:78%;line-height:1.05}
+.seat .right{text-align:right}
+.seat .st{font-size:19px;font-weight:800}
+.seat .st.ok{color:var(--teal-d)}.seat .st.wait{color:var(--amber)}
+.seat .toks{margin-top:6px}
+.meter{grid-column:1/-1;height:8px;border-radius:99px;background:var(--soft);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--teal);transition:width .4s}
+.seats.many{gap:8px}.seats.many .seat{padding:7px 14px;gap:4px 12px}.seats.many .seat .ceo{font-size:24px}.seats.many .seat .g{font-size:12px}.seats.many .seat .st{font-size:16px}.seats.many .toks{margin-top:2px}.seats.many .meter{height:6px}
+.immune{display:inline-block;background:var(--red);color:#fff;font-size:13px;font-weight:800;padding:2px 9px;border-radius:99px;margin-left:6px;vertical-align:3px}
+/* reveal: one card per board, stamped with the verdict */
+.verdicts{display:grid;gap:18px}
+.vcard{position:relative;background:#fff;border:2px solid var(--ink);border-radius:20px;box-shadow:0 6px 0 var(--ink);padding:16px 18px 14px;display:flex;flex-direction:column;opacity:0;animation:fade .5s ease forwards}
+.vcard .g{font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray)}
+.vcard .ceo{font-size:30px;font-weight:800;font-stretch:78%;line-height:1;margin:2px 0 10px}
+.vcard .q{font-family:var(--serif);font-size:23px;line-height:1.15;margin:10px 0 12px;flex:1}
+.vcard .stampv{position:absolute;right:14px;top:14px;font-weight:900;font-size:17px;letter-spacing:.08em;text-transform:uppercase;border:3px solid;border-radius:10px;padding:3px 10px;transform:rotate(5deg);background:#fff;animation:stamp .4s cubic-bezier(.2,1.6,.4,1) both}
+.stampv.fooled{color:var(--red)}.stampv.caught{color:var(--teal-d)}.stampv.trusted{color:var(--teal-d)}.stampv.doubted{color:var(--amber)}
+@keyframes stamp{from{transform:rotate(5deg) scale(2.2);opacity:0}to{transform:rotate(5deg) scale(1);opacity:1}}
+.vcard .pts{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid var(--soft);padding-top:10px}
+.vcard .pts div{font-size:13px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em}
+.vcard .pts b{display:block;font-size:34px;font-weight:900;font-stretch:80%;letter-spacing:0}
+.vcard .how{font-size:15px;font-weight:700;color:var(--gray)}
+.vcard .how em{font-style:normal;color:var(--teal-d)}
+.verdicts.n6{gap:12px}.verdicts.n6 .vcard{padding:12px 12px 10px}.verdicts.n6 .vcard .q{font-size:18px;margin:8px 0}.verdicts.n6 .vcard .ceo{font-size:22px;margin-bottom:6px}.verdicts.n6 .vcard .pts b{font-size:26px}.verdicts.n6 .vcard .stampv{position:static;display:inline-block;align-self:flex-start;margin:0 0 6px;font-size:13px}.verdicts.n6 .vcard .how{font-size:13px}.verdicts.n6 + .truthbox{font-size:19px;margin-top:14px;padding:12px 18px 12px 60px}
+.truthbox{margin-top:20px;font-size:23px;border-radius:18px;background:#fff;border:2px solid var(--red);box-shadow:0 6px 0 var(--red);padding:16px 22px 16px 70px;position:relative}
+.truthbox:before{content:'';position:absolute;left:24px;top:22px;width:26px;height:26px;background:var(--red);border-radius:0 55% 55% 55%;transform:rotate(45deg)}
+.truthbox b{font-size:15px}
+/* leaderboards, rules, truth table */
+.final{gap:70px}
+.row{grid-template-columns:56px 1fr 120px}
+.row .nm{height:58px;border:2px solid var(--line)}
+.row .nm span{line-height:54px;font-size:27px}
+.row .v{font-size:34px;font-stretch:80%}
+.row.top .r{color:var(--red)}
+.row:first-child .nm{border-color:var(--ink);box-shadow:0 5px 0 var(--ink)}
+.row:first-child .nm .fill{background:#bfe8dd}
+.rules3{gap:40px}
+.rules3>div{background:#fff;border:2px solid var(--line);border-radius:22px;padding:22px 26px}
+.rules3 ul{font-size:24px}
+.stab{border-radius:14px;overflow:hidden;font-size:23px}
+.ptab{border-collapse:separate;border-spacing:0 8px;margin-top:-8px}
+.ptab td{border-bottom:0;padding:12px 16px}
+.ptab tr td:first-child{border-radius:14px 0 0 14px}.ptab tr td:last-child{border-radius:0 14px 14px 0}
+.punch{border-radius:18px;font-size:27px}
+.motion{font-size:52px;max-width:1450px}
+.bars{max-width:1500px}
+.bar .track{height:60px}
+.bars{margin-top:30px;gap:16px}
+.bar .lab{font-size:32px}
+.mech{padding:16px 22px}
+.mech b{font-size:32px}
+.dense h2{font-size:46px}.dense .sub{font-size:21px}.dense .titlebar{margin-bottom:14px}
+.dense .ptab td{padding:7px 14px}.dense .punch{margin-top:12px;font-size:23px;padding:10px 20px}
+.final .board{gap:14px}.final .row .nm{height:66px}.final .row .nm span{line-height:62px;font-size:31px}.final .row .v{font-size:38px}
+.gcard.sv .ceo{font-size:34px}.gcard.sv.app{border-color:var(--red);box-shadow:0 6px 0 var(--red)}.gcard.sv.rej{border-color:var(--teal-d);box-shadow:0 6px 0 var(--teal-d)}
 </style>
 </head>
 <body>
-<div class="topline"></div>
+<div id="stage">
+<div id="scene"></div>
 <header>
   <div class="logo">theran<i></i>s</div>
   <div id="tabs" style="display:none"></div>
+  <div class="rounds" id="rounds"></div>
   <div class="join" id="joinChip" hidden>
     <img id="miniQr" alt="Join QR code">
     <div><b id="miniUrl"></b><small><span id="online">0</span> players</small></div>
   </div>
 </header>
 <main id="main"></main>
+</div>
 <div class="foot" id="foot"></div>
 <div class="controls" id="controls" hidden>
   <span id="pos"></span>
@@ -327,6 +450,97 @@ function tabs() {
   $('#tabs').innerHTML = S.sections.filter((x) => x !== 'Join').map((x) =>
     `<div class="tab ${x === S.phase.section ? 'on' : ''}">${esc(x)}</div>`).join('');
 }
+
+// ---- boardroom stage ----
+function fit() { document.documentElement.style.setProperty('--k', Math.min(innerWidth / 1920, innerHeight / 1080)); }
+addEventListener('resize', fit); fit();
+function sceneSvg() {
+  // Looking down the boardroom table at the screen on the far wall.
+  const fx0 = 560, fx1 = 1360, fy = 868, nx0 = -60, nx1 = 1980, ny = 1080;
+  const lerp = (a, b, t) => a + (b - a) * t;
+  // A high-back executive chair, seen from the table: headrest, back, arms.
+  const chair = (t, side) => {
+    const ex = side < 0 ? lerp(fx0, nx0, t) : lerp(fx1, nx1, t), y = lerp(fy, ny, t);
+    const w = 70 + 230 * t, h = 120 + 330 * t;
+    const x0 = side < 0 ? ex - w * 0.98 : ex - w * 0.02, top = y - h * 0.72;
+    const r = w * 0.3;
+    const rim = side < 0 ? x0 + 3 : x0 + w - 7;
+    return `<g>
+      <path d="M${x0},${top + r} Q${x0},${top} ${x0 + r},${top} L${x0 + w - r},${top} Q${x0 + w},${top} ${x0 + w},${top + r} L${x0 + w * 0.94},${top + h} L${x0 + w * 0.06},${top + h} Z" fill="url(#chair)"/>
+      <rect x="${x0 + w * 0.2}" y="${top + h * 0.05}" width="${w * 0.6}" height="${h * 0.16}" rx="${w * 0.08}" fill="#28605d" opacity=".9"/>
+      <path d="M${x0 + w * 0.14},${top + h * 0.28} L${x0 + w * 0.86},${top + h * 0.28}" stroke="#2FA890" stroke-opacity=".18" stroke-width="${1 + 2 * t}"/>
+      <path d="M${x0 + w * 0.14},${top + h * 0.48} L${x0 + w * 0.86},${top + h * 0.48}" stroke="#2FA890" stroke-opacity=".12" stroke-width="${1 + 2 * t}"/>
+      <rect x="${rim}" y="${top + r * 0.6}" width="4" height="${h * 0.7}" rx="2" fill="#9fe6d4" opacity=".55"/>
+    </g>`;
+  };
+  // Night skyline through tall side windows.
+  const windowPane = (x, w) => {
+    let b = '', lit = '', seed = x * 7 + 3;
+    const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    for (let bx = x; bx < x + w; bx += 18 + rnd() * 22) {
+      const bw = 16 + rnd() * 26, bh = 120 + rnd() * 380, by = fy - bh;
+      b += `<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="#0a1c1d"/>`;
+      for (let wy = by + 10; wy < fy - 10; wy += 16) for (let wx = bx + 4; wx < bx + bw - 4; wx += 8) if (rnd() < 0.13) lit += `<rect x="${wx.toFixed(1)}" y="${wy.toFixed(1)}" width="3" height="5" fill="#f3d38a" opacity="${(0.35 + rnd() * 0.5).toFixed(2)}"/>`;
+    }
+    return `<g clip-path="url(#clip${x})"><rect x="${x}" y="70" width="${w}" height="${fy - 70}" fill="url(#sky)"/>${b}${lit}</g>
+      <clipPath id="clip${x}"><rect x="${x}" y="70" width="${w}" height="${fy - 70}"/></clipPath>
+      <rect x="${x}" y="70" width="${w}" height="${fy - 70}" fill="none" stroke="#1c4a48" stroke-width="8"/>
+      <line x1="${x + w / 2}" y1="70" x2="${x + w / 2}" y2="${fy}" stroke="#1c4a48" stroke-width="5"/>
+      <line x1="${x}" y1="${fy - 260}" x2="${x + w}" y2="${fy - 260}" stroke="#1c4a48" stroke-width="5"/>`;
+  };
+  let slats = '';
+  for (let x = 160; x < 1760; x += 28) slats += `<rect x="${x}" y="0" width="2" height="${fy}" fill="#fff" opacity=".03"/>`;
+  const far = [0.4, 0.66], near = [0.95];
+  return `<svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A2122"/><stop offset=".8" stop-color="#133738"/><stop offset="1" stop-color="#0E2A2B"/></linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c2a3a"/><stop offset="1" stop-color="#1d4a52"/></linearGradient>
+    <radialGradient id="spill" cx=".5" cy=".45" r=".5"><stop offset="0" stop-color="#2FA890" stop-opacity=".32"/><stop offset="1" stop-color="#2FA890" stop-opacity="0"/></radialGradient>
+    <linearGradient id="table" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a6e66"/><stop offset=".12" stop-color="#21504b"/><stop offset="1" stop-color="#0b2425"/></linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6fff8" stop-opacity=".35"/><stop offset="1" stop-color="#e6fff8" stop-opacity="0"/></linearGradient>
+    <linearGradient id="chair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d4b4a"/><stop offset=".6" stop-color="#0c2829"/><stop offset="1" stop-color="#051314"/></linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1f20"/><stop offset="1" stop-color="#030c0d"/></linearGradient>
+    <radialGradient id="lamp" cx=".5" cy="0" r="1"><stop offset="0" stop-color="#f3e6c0" stop-opacity=".28"/><stop offset="1" stop-color="#f3e6c0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#wall)"/>
+  ${slats}
+  ${windowPane(18, 112)}${windowPane(1790, 112)}
+  <ellipse cx="960" cy="470" rx="1000" ry="520" fill="url(#spill)"/>
+  <rect x="0" y="${fy - 2}" width="1920" height="${1080 - fy + 2}" fill="url(#floor)"/>
+  <ellipse cx="80" cy="70" rx="160" ry="420" fill="url(#lamp)"/><ellipse cx="1840" cy="70" rx="160" ry="420" fill="url(#lamp)"/>
+  ${far.map((t) => chair(t, -1) + chair(t, 1)).join('')}
+  <polygon points="${fx0},${fy} ${fx1},${fy} ${nx1},${ny} ${nx0},${ny}" fill="url(#table)"/>
+  <polygon points="${fx0 + 80},${fy + 3} ${fx1 - 80},${fy + 3} 1440,${ny} 480,${ny}" fill="url(#sheen)" opacity=".5"/>
+  <line x1="${fx0}" y1="${fy}" x2="${fx1}" y2="${fy}" stroke="#a6eedc" stroke-opacity=".55" stroke-width="2"/>
+  <line x1="${fx0}" y1="${fy}" x2="${nx0}" y2="${ny}" stroke="#a6eedc" stroke-opacity=".25" stroke-width="3"/>
+  <line x1="${fx1}" y1="${fy}" x2="${nx1}" y2="${ny}" stroke="#a6eedc" stroke-opacity=".25" stroke-width="3"/>
+  <g transform="translate(960 948)"><ellipse cx="0" cy="34" rx="44" ry="9" fill="#000" opacity=".35"/>
+    <path d="M0,-44 C18,-20 28,-4 28,10 A28,28 0 1 1 -28,10 C-28,-4 -18,-20 0,-44Z" fill="#B5122E"/>
+    <path d="M-10,-6 C-14,2 -15,8 -14,14" stroke="#fff" stroke-opacity=".45" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+  ${near.map((t) => chair(t, -1) + chair(t, 1)).join('')}
+  </svg>`;
+}
+document.getElementById('scene').innerHTML = sceneSvg();
+function roundsHtml() {
+  if (!C || !S) return '';
+  const total = C.pitchRoundCount || 6, id = S.phase.id;
+  const m = /^r(\d+)$/.exec(id);
+  const order = ['lobby', 'w0', 'rules', 'ceos'];
+  let done, now = -1;
+  if (m) { now = +m[1] - 1; done = now; }
+  else if (id === 'super') done = C.superAfter || 3;
+  else if (order.includes(id)) done = 0;
+  else done = total;
+  if (order.includes(id)) return '';
+  let h = '';
+  for (let i = 0; i < total; i++) {
+    if (i === (C.superAfter || 3)) h += `<span class="rd sup ${done > i || id === 'super' ? 'done' : ''}" title="Surprise proposal"></span>`;
+    h += `<span class="rd ${i < done ? 'done' : i === now ? 'now' : ''}"></span>`;
+  }
+  const label = m ? `Round ${now + 1} of ${total}` : id === 'super' ? 'Surprise proposal' : 'All rounds played';
+  return `<span>${label}</span><span class="dots">${h}</span>`;
+}
+
 const titlebar = (kicker, title, sub) => `<div class="titlebar fade"><div class="kicker">${esc(kicker)}</div><h2>${title}</h2>${sub ? `<div class="sub">${sub}</div>` : ''}</div>`;
 const pct = (n, total) => total ? Math.round((n / total) * 100) : 0;
 
@@ -340,6 +554,7 @@ function render() {
   document.body.classList.toggle('dark', ph.type === 'pitch');
   $('#joinChip').hidden = ph.type === 'lobby';
   $('#online').textContent = S.online;
+  $('#rounds').innerHTML = roundsHtml();
   $('#pos').textContent = `${S.phaseIndex + 1} / ${S.phaseCount}`;
   $('#foot').textContent = '';
   const fn = views[ph.type];
@@ -418,32 +633,47 @@ const views = {
       </div>`;
   },
   ceoAssign: () => {
-    const solo = S.soloGroups && S.soloGroups.length ? `<div class="punch" style="font-size:22px">${esc(S.soloGroups.join(', '))}: need at least 2 people. Move someone in, then press Back and Next.</div>` : '';
+    const solo = S.soloGroups && S.soloGroups.length ? `<div class="punch" style="font-size:22px;margin-top:22px">${esc(S.soloGroups.join(', '))}: need at least 2 people. Move someone in, then press Back and Next.</div>` : '';
     return `${titlebar('Activity #1 · The Pitch', 'Meet your CEOs', 'CEOs: stand up and introduce yourself to your board. Keep your phone screen to yourself: your cards are on it.')}
-      <div class="gcards">${S.pitchGroups.map((g, i) => `<div class="gcard fade" style="animation-delay:${i * 0.15}s"><div class="g">${esc(g.group)}</div><div class="ceo">${esc(g.ceo)}</div><div class="meta">CEO · board of ${g.boardSize}</div></div>`).join('')}</div>${solo}`;
+      <div class="gcards">${S.pitchGroups.map((g, i) => `<div class="gcard ceoseat fade" style="animation-delay:${i * 0.15}s"><div class="g">${esc(g.group)}</div><div class="ceo">${esc(g.ceo)}</div><span class="badge">CEO</span><div class="meta">Board of ${g.boardSize} · ${tokens(C.verifyTokens)} lab tests</div></div>`).join('')}</div>${solo}`;
   },
   pitchRound: () => {
     const r = S.round;
     const head = titlebar(`Activity #1 · Round ${r.number} of ${r.total}`, esc(r.company) + ': ' + esc(r.topic), {
-      pick: `Every CEO is now the CEO of ${esc(r.company)}. Pick a card on your phone, then read it aloud to your board.`,
-      decide: 'Boards: Believe or Challenge on your phones. Running a lab test costs one drop.',
+      pick: `Every CEO is now the CEO of ${esc(r.company)}. CEOs pick a card. Boards, read the briefing.`,
+      decide: 'CEOs: pitch it out loud. Boards: Believe or Challenge on your phones. A lab test costs one drop.',
       reveal: 'Here’s what every CEO told their board.',
     }[r.stage]);
     if (r.stage !== 'reveal') {
-      return `${head}<div class="gcards">${S.pitchGroups.map((g) => {
+      const many = S.pitchGroups.length > 4;
+      const seats = S.pitchGroups.map((g) => {
+        const ok = r.stage === 'pick' ? g.picked : g.voted >= g.boardSize;
         const st = r.stage === 'pick'
           ? (g.picked ? '<div class="st ok">✓ Pitch chosen</div>' : '<div class="st wait">Choosing…</div>')
-          : `<div class="st ${g.voted >= g.boardSize ? 'ok' : 'wait'}">${g.voted} of ${g.boardSize} voted${g.verified ? ' · tested' : ''}</div>`;
-        return `<div class="gcard"><div class="g">${esc(g.group)}</div><div class="ceo">${esc(g.ceo)}</div>
-          <div class="meta">${tokens(g.tokens)} tests left${g.immune ? ' · <b style="color:var(--red)">CEO immune</b>' : ''}</div>${st}</div>`;
-      }).join('')}</div>${r.briefing ? `<div class="brief"><b>Board briefing</b>${esc(r.briefing)}${r.ask && r.ask.length ? `<div class="ask"><b>Ask your CEO</b>${r.ask.map(esc).join(' · ')}</div>` : ''}</div>` : ''}`;
+          : `<div class="st ${ok ? 'ok' : 'wait'}">${g.voted} of ${g.boardSize} voted${g.verified ? ' · tested' : ''}</div>`;
+        return `<div class="seat ${ok ? 'ok' : ''}"><div><div class="g">${esc(g.group)}</div><div class="ceo">${esc(g.ceo)}${g.immune ? '<span class="immune">immune</span>' : ''}</div></div>
+          <div class="right">${st}<div class="toks">${tokens(g.tokens)}</div></div>
+          ${r.stage === 'decide' ? `<div class="meter"><i style="width:${pct(g.voted, g.boardSize)}%"></i></div>` : ''}</div>`;
+      }).join('');
+      const brief = r.briefing ? `<div class="casefile"><div class="tabk">Board briefing · ${esc(r.company)}</div><p>${esc(r.briefing)}</p>
+        ${r.ask && r.ask.length ? `<div class="askh">Ask your CEO</div><ol>${r.ask.map((q) => `<li>${esc(q)}</li>`).join('')}</ol>` : ''}</div>` : '';
+      return `${head}<div class="roundgrid">${brief}<div class="seats ${many ? 'many' : ''}">${seats}</div></div>`;
     }
     const lie = r.cards.find((c) => c.kind === 'lie');
-    return `${head}<table class="ptab"><tr><th>Group</th><th>CEO pitched</th><th>Board</th><th style="text-align:right">CEO</th><th style="text-align:right">Board</th></tr>
-      ${S.pitchGroups.map((g, i) => `<tr style="animation-delay:${0.2 + i * 0.35}s"><td><b>${esc(g.group)}</b><br><span style="color:var(--gray);font-size:16px">${esc(g.ceo)}</span></td>
-        <td><span class="kind ${g.result.kind}">${esc(kindName(g.result.kind))}</span> <span style="font-size:17px">${esc(g.result.text)}</span></td>
-        <td>${g.result.decision === 'believe' ? 'Believed' : 'Challenged'}${g.result.verified ? ' <span style="color:var(--gray);font-size:15px">(verified)</span>' : ''}${g.result.united ? ' <span style="color:var(--teal-d);font-weight:800;font-size:15px">United +' + C.unanimousBonus + '</span>' : ''}</td>
-        <td class="num ${cls(g.result.ceo)}">${fmt(g.result.ceo)}${g.result.immune && g.result.kind !== 'honest' && g.result.decision === 'challenge' ? '<div style="font-size:12px;color:var(--red)">immune</div>' : ''}</td><td class="num ${cls(g.result.board)}">${fmt(g.result.board)}</td></tr>`).join('')}</table>
+    const n = S.pitchGroups.length;
+    const cols = n;
+    const verdict = (res) => res.decision === 'believe'
+      ? (res.kind === 'honest' ? ['trusted', 'Trusted'] : ['fooled', 'Fooled'])
+      : (res.kind === 'honest' ? ['doubted', 'Doubted'] : ['caught', 'Caught']);
+    return `${head}<div class="verdicts n${n > 4 ? 6 : 4}" style="grid-template-columns:repeat(${cols},1fr)">${S.pitchGroups.map((g, i) => {
+        const res = g.result, v = verdict(res);
+        return `<div class="vcard" style="animation-delay:${0.15 + i * 0.3}s"><div class="stampv ${v[0]}" style="animation-delay:${0.5 + i * 0.3}s">${v[1]}</div>
+          <div class="g">${esc(g.group)}</div><div class="ceo">${esc(g.ceo)}</div>
+          <div><span class="kind ${res.kind}">${esc(kindName(res.kind))}</span></div>
+          <div class="q">“${esc(res.text)}”</div>
+          <div class="how">${res.decision === 'believe' ? 'Board believed' : 'Board challenged'}${res.verified ? ' · tested' : ''}${res.united ? ` · <em>united +${C.unanimousBonus}</em>` : ''}${res.immune && res.kind !== 'honest' && res.decision === 'challenge' ? ' · <em style="color:var(--red)">CEO immune</em>' : ''}</div>
+          <div class="pts"><div>CEO<b class="${cls(res.ceo)}">${fmt(res.ceo)}</b></div><div>Board<b class="${cls(res.board)}">${fmt(res.board)}</b></div></div></div>`;
+      }).join('')}</div>
       <div class="truthbox"><b>${r.company === 'Theranos' ? 'What came out later (SEC, 2018), not what the board knew then' : 'What really happened at ' + esc(r.company)}</b>${esc(r.said)}: “${esc(lie.text)}” ${esc(r.truth)}</div>`;
   },
   superVote: () => {
@@ -453,12 +683,12 @@ const views = {
         <div class="concept fade">Shareholder activism</div>
         <div class="motionbig fade">${esc(sv.text)}</div>
         <div class="sub" style="font-size:26px">If approved: CEO +${C.superMotion.approve.ceo}, and ${esc(sv.effect.charAt(0).toLowerCase() + sv.effect.slice(1))}</div>
-        <div class="gcards" style="margin-top:24px">${S.pitchGroups.map((g) => `<div class="gcard"><div class="g">${esc(g.group)}</div><div class="ceo" style="font-size:26px">${esc(g.ceo)}</div><div class="st ${g.voted >= g.boardSize ? 'ok' : 'wait'}">${g.voted} of ${g.boardSize} voted</div></div>`).join('')}</div>`;
+        <div class="gcards" style="margin-top:24px">${S.pitchGroups.map((g) => `<div class="gcard sv ${g.voted >= g.boardSize ? 'ok' : ''}"><div class="g">${esc(g.group)} · CEO</div><div class="ceo">${esc(g.ceo)}</div><div class="st ${g.voted >= g.boardSize ? 'ok' : 'wait'}">${g.voted} of ${g.boardSize} voted</div></div>`).join('')}</div>`;
     }
     const n = S.pitchGroups.filter((g) => g.result.decision === 'approve').length;
     return `${titlebar('Activity #1 · Surprise proposal', `${n} of ${S.pitchGroups.length} boards approved it`, '')}
-      <div class="gcards">${S.pitchGroups.map((g, i) => `<div class="gcard fade" style="animation-delay:${i * 0.25}s;border-top:8px solid ${g.result.decision === 'approve' ? 'var(--red)' : 'var(--teal)'}"><div class="g">${esc(g.group)}</div>
-        <div class="ceo" style="font-size:30px">${g.result.decision === 'approve' ? 'Approved' : 'Rejected'}</div><div class="meta">${g.result.decision === 'approve' ? 'CEO is now immune' : 'Board kept its power'}</div></div>`).join('')}</div>
+      <div class="gcards">${S.pitchGroups.map((g, i) => `<div class="gcard sv ${g.result.decision === 'approve' ? 'app' : 'rej'} fade" style="animation-delay:${i * 0.25}s"><div class="g">${esc(g.group)}</div>
+        <div class="ceo" style="color:${g.result.decision === 'approve' ? 'var(--red)' : 'var(--teal-d)'}">${g.result.decision === 'approve' ? 'Approved' : 'Rejected'}</div><div class="meta">${g.result.decision === 'approve' ? 'CEO is now immune' : 'Board kept its power'}</div></div>`).join('')}</div>
       <div class="punch fade" style="animation-delay:1.4s">${esc(sv.real)}</div>`;
   },
   pitchStandings: () => {
@@ -468,9 +698,9 @@ const views = {
       <div class="final"><div><div class="kicker">Top CEOs</div><div class="board" style="margin-top:12px">${S.ceoBoard.map((g, i) => lrow(i + 1, g.ceo, g.group, fmt(g.total.ceo), Math.max(0, g.total.ceo) / maxC, i)).join('')}</div></div>
       <div><div class="kicker">Top Boards</div><div class="board" style="margin-top:12px">${S.boardBoard.map((g, i) => lrow(i + 1, g.group, g.boardSize + (g.boardSize === 1 ? ' member' : ' members'), fmt(g.total.board), Math.max(0, g.total.board) / maxB, i)).join('')}</div></div></div>`;
   },
-  pitchTruth: () => `${titlebar('Activity #1 · These were real', 'Every lie card was a real claim', 'Two from Theranos (from later SEC complaints, not what the board knew then), four from other companies whose boards missed it too.')}
-      <table class="ptab">${S.truths.map((t, i) => `<tr style="animation-delay:${0.3 + i * 0.6}s"><td style="width:13%"><b>${esc(t.company)}</b></td><td style="width:38%;font-family:var(--serif);font-size:21px;line-height:1.2">“${esc(t.lie)}”</td><td style="font-size:16px;line-height:1.3">${esc(t.truth)}</td></tr>`).join('')}</table>
-      <div class="punch fade" style="animation-delay:4.2s">${S.superApproved} of ${S.pitchGroups.length} of your boards gave their CEO 99.7% of the votes. The real board did too.</div>`,
+  pitchTruth: () => `<div class="dense">${titlebar('Activity #1 · These were real', 'Every lie card was a real claim', 'Two from Theranos (from later SEC complaints, not what the board knew then), four from other companies whose boards missed it too.')}
+      <table class="ptab">${S.truths.map((t, i) => `<tr style="animation-delay:${0.3 + i * 0.6}s"><td style="width:13%"><b>${esc(t.company)}</b></td><td style="width:36%;font-family:var(--serif);font-size:24px;line-height:1.15">“${esc(t.lie)}”</td><td style="font-size:17px;line-height:1.28">${esc(t.truth)}</td></tr>`).join('')}</table>
+      <div class="punch fade" style="animation-delay:4.2s">${S.superApproved} of ${S.pitchGroups.length} of your boards gave their CEO 99.7% of the votes. The real board did too.</div></div>`,
   slidesBreak: () => `<div class="big-center"><div><div class="kicker">Back to the presentation</div><h1>Phones down for now</h1>
      <div class="rules">Next: how Theranos’s board actually failed.<br>Keep this page open on your phone. You’ll need it again for the final quiz.</div></div></div>`,
   paperBreak: () => `<div class="big-center"><div><div class="kicker">Activity #2 · Phones down</div><h1>Blindsided: The $10 Million Bet</h1>

@@ -136,12 +136,40 @@ input{display:block;width:100%;font-size:20px;font-weight:600;padding:15px 14px;
 @media (max-width:350px){h1{font-size:33px}h2{font-size:25px}.claim,.motion{font-size:23px}.pcard .tx{font-size:21px}.grid2{grid-template-columns:1fr 1fr}.qo{min-height:108px;font-size:15px}.big{font-size:56px}}
 @media (orientation:landscape) and (max-height:480px){.center{padding-top:2vh}.pulse{width:44px;height:44px;margin-bottom:18px}.wrap{max-width:720px}}
 @media (prefers-reduced-motion:reduce){.pulse{-webkit-animation:none;animation:none}.btn,.vbtn,.pcard,.qo{transition:none}}
+
+/* ---- boardroom touches (v3) ---- */
+html,body{background:linear-gradient(180deg,#EEF6F3 0%,#E3EFEB 100%) fixed}
+.room{position:fixed;left:0;right:0;bottom:0;height:64px;z-index:0;pointer-events:none;opacity:.8}
+.room svg{display:block;width:100%;height:100%}
+.wrap{position:relative;z-index:1}
+body{padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+header{box-shadow:0 6px 18px rgba(14,42,43,.25)}
+.role{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--teal-d);border-radius:99px;padding:2px 8px;margin-right:6px;vertical-align:1px}
+.role.ceo{background:var(--blood)}
+.brief{position:relative;border:2px solid var(--ink);border-left:2px solid var(--ink);border-radius:16px;box-shadow:0 4px 0 var(--ink);padding:18px 14px 14px;margin:22px 0 14px}
+.brief .bt{font-size:13px}
+.brief>.bt:first-child{position:absolute;left:12px;top:-13px;background:var(--ink);color:#fff;padding:3px 10px;border-radius:8px}
+.brief p{font-family:var(--quote);font-size:21px;line-height:1.2}
+.brief ul{list-style:none;margin:6px 0 0;padding:0}
+.brief li{position:relative;padding:5px 0 5px 20px;font-weight:600}
+.brief li:before{content:'';position:absolute;left:2px;top:12px;width:8px;height:8px;background:var(--blood);border-radius:0 55% 55% 55%;transform:rotate(45deg)}
+.claim{box-shadow:0 4px 0 var(--ink)}
+.claim:before{content:'';position:absolute;left:-2px;top:-2px;right:-2px;height:8px;border-radius:20px 20px 0 0;background:var(--teal);border:2px solid var(--ink);border-bottom:0;display:none}
+.kicker{background:#fff;border:2px solid var(--teal-l)}
+.center h2{font-size:31px}
+.ceobadge{position:relative;overflow:hidden}
+.ceobadge:after{content:'';position:absolute;right:-26px;bottom:-30px;width:120px;height:120px;background:rgba(255,255,255,.12);border-radius:0 55% 55% 55%;transform:rotate(45deg)}
 </style>
 </head>
 <body>
 <div class="top"></div>
 <header><div class="logo">theran<i></i>s</div><div class="me" id="me"></div></header>
 <div class="wrap" id="app"></div>
+<div class="room" aria-hidden="true"><svg viewBox="0 0 400 70" preserveAspectRatio="xMidYMax slice">
+<polygon points="130,14 270,14 420,70 -20,70" fill="#c6ddd6"/>
+<line x1="130" y1="14" x2="270" y2="14" stroke="#fff" stroke-width="2" opacity=".9"/>
+<path d="M200,24 C205,31 208,35 208,39 A8,8 0 1 1 192,39 C192,35 195,31 200,24Z" fill="#B5122E" opacity=".7"/>
+</svg></div>
 <div class="conn" id="conn" hidden>Reconnecting…</div>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -194,7 +222,8 @@ function bindJoin() {
 function header() {
   if (!S || !S.me) { $('#me').innerHTML = ''; return; }
   const m = S.me;
-  $('#me').innerHTML = `<b>${esc(m.name)}</b>${m.group ? esc(m.group) + ', ' : ''}${m.score.total.toLocaleString()} pts`;
+  const role = m.pitch && (m.pitch.role === 'ceo' || m.pitch.role === 'board') ? `<span class="role ${m.pitch.role}">${m.pitch.role === 'ceo' ? 'CEO' : 'Board'}</span>` : '';
+  $('#me').innerHTML = `<b>${role}${esc(m.name)}</b>${m.group ? esc(m.group) + ', ' : ''}${m.score.total.toLocaleString()} pts`;
 }
 
 // Redraw only when what the phone shows actually changes, so inputs don't reset mid-tap.
