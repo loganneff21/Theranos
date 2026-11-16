@@ -416,7 +416,7 @@ const views = {
   },
   ceoAssign: () => {
     const solo = S.soloGroups && S.soloGroups.length ? `<div class="punch" style="font-size:22px">${esc(S.soloGroups.join(', '))}: need at least 2 people. Move someone in, then press Back and Next.</div>` : '';
-    return `${titlebar('Activity #1 · The Pitch', 'Meet your CEOs', 'CEOs: your cards are on your phone. Don’t show anyone.')}
+    return `${titlebar('Activity #1 · The Pitch', 'Meet your CEOs', 'CEOs: stand up and introduce yourself to your board. Keep your phone screen to yourself: your cards are on it.')}
       <div class="gcards">${S.pitchGroups.map((g, i) => `<div class="gcard fade" style="animation-delay:${i * 0.15}s"><div class="g">${esc(g.group)}</div><div class="ceo">${esc(g.ceo)}</div><div class="meta">CEO · board of ${g.boardSize}</div></div>`).join('')}</div>${solo}`;
   },
   pitchRound: () => {

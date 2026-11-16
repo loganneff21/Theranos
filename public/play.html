@@ -257,7 +257,7 @@ const V = {
   ceoAssign: () => {
     const p = S.me.pitch;
     if (p.role === 'solo') return wait('Your group needs one more person', 'Find a teammate: the game needs a CEO and at least one board member.');
-    if (p.role === 'ceo') return `<div class="center" style="padding-top:4vh"><div class="kicker">The Pitch</div><div class="ceobadge fade"><div class="big">You are the CEO</div><p style="color:#ddd;margin-top:8px">Your cards appear here each round. Don’t show anyone your phone.</p></div>
+    if (p.role === 'ceo') return `<div class="center" style="padding-top:4vh"><div class="kicker">The Pitch</div><div class="ceobadge fade"><div class="big">You are the CEO</div><p style="color:#ddd;margin-top:8px">Stand up and introduce yourself to your board. Your cards appear here each round, so keep your screen to yourself.</p></div>
       <p style="margin-top:16px">Pick a claim, then read it aloud to your board like you mean it.</p></div>`;
     return `<div class="center" style="padding-top:4vh"><div class="kicker">The Pitch</div><h2>You’re on the board</h2>
       <div class="big" style="font-size:34px">${esc(p.ceoName)}</div><p>is your CEO. Decide what to believe.</p>
