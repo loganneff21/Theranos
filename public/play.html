@@ -87,6 +87,11 @@ input{display:block;width:100%;font-size:20px;font-weight:600;padding:15px 14px;
 .res{border-radius:22px;border:2px solid var(--ink);padding:24px 16px;text-align:center;color:#fff;margin-top:6px;box-shadow:0 6px 0 var(--ink)}
 .res.good{background:var(--teal-d)}.res.bad{background:var(--blood)}.res.none{background:var(--gray)}
 .res .big{font-size:50px}
+.brief{background:#fff;border:2px solid var(--line);border-left:6px solid var(--teal-d);border-radius:12px;padding:12px 14px;margin:12px 0}
+.brief .bt{font-size:13px;font-weight:800;color:var(--teal-d)}
+.brief p{color:var(--ink);font-size:16px;margin-top:4px}
+.brief ul{margin:6px 0 0 18px;font-size:16px;line-height:1.4}
+.brief summary{font-size:15px;font-weight:800;color:var(--teal-d);cursor:pointer}
 .lean{margin:12px 0 4px;border:2px solid var(--ink);border-radius:12px;padding:10px 12px;background:#fff}
 .lean .lt{font-size:13px;font-weight:700;color:var(--gray)}
 .lean .lb{display:flex;flex-wrap:wrap;margin-top:4px;font-size:17px}
@@ -284,14 +289,16 @@ const V = {
         return `${head}<h2>You’re the CEO of ${esc(r.company)}. What will you tell your board?</h2><p>Tap a card. You can change it until the host moves on.</p>
           ${p.cards.map((c, i) => `<button class="pcard ${p.picked === i ? 'on' : ''}" data-i="${i}"><span class="lab ${c.kind}">${esc(c.label)}</span>
             <div class="tx">${esc(c.text)}</div><div class="pts">If believed: ${sign(c.ifBelieved)} · If challenged: ${sign(c.ifChallenged)}${p.immune && c.ifChallenged < 0 ? ' (immune: 0)' : ''}</div></button>`).join('')}
-          ${p.picked !== null ? '<div class="ok" style="margin-top:12px">✓ Now read it aloud to your board.</div>' : ''}`;
+          ${p.picked !== null ? '<div class="ok" style="margin-top:12px">✓ Now read it aloud to your board.</div>' : ''}
+          <p style="margin-top:16px">Your board sees this briefing:</p>${briefHtml(r)}`;
       }
       const c = p.cards[p.picked];
       return `${head}<h2>Your board is deciding…</h2><div class="claim">${esc(c.text)}</div><p>Hold your poker face.${p.immune ? ' You’re immune: getting caught costs you nothing.' : ''}</p>`;
     }
-    if (r.stage === 'pick') return head + wait(`You’re on the board of ${esc(r.company)}. ${p.ceoName} is choosing what to tell you…`, 'Listen closely when they pitch.');
-    return `${head}<div class="muted">${esc(p.ceoName)} says:</div><div class="claim">${esc(p.claim)}</div>
+    if (r.stage === 'pick') return `${head}<h2>You’re on the board of ${esc(r.company)}</h2><p>${esc(p.ceoName)} is choosing what to tell you. Read your briefing while you wait.</p>${briefHtml(r)}`;
+    return `${head}<div class="muted">${esc(p.ceoName)}, CEO of ${esc(r.company)}, says:</div><div class="claim">${esc(p.claim)}</div>
       ${p.verified ? `<div class="truthtag lab ${p.truthLabel.toLowerCase()}">Test result: ${p.truthLabel === 'Honest' ? 'honest' : p.truthLabel === 'Lie' ? 'a lie' : 'an exaggeration'}</div>` : ''}
+      ${briefHtml(r)}
       <div id="lean">${leanHtml(p)}</div>
       <button class="vbtn believe ${p.myVote === 'believe' ? 'on' : ''}" data-v="believe">Believe</button>
       <button class="vbtn challenge ${p.myVote === 'challenge' ? 'on' : ''}" data-v="challenge">Challenge</button>
@@ -369,6 +376,13 @@ const V = {
       <span style="font-weight:800;color:var(--ink)">Total</span><b>${s.total.toLocaleString()}</b></div></div>`;
   },
 };
+
+function briefHtml(r, compact) {
+  if (!r.briefing) return '';
+  const qs = (r.ask || []).map((q) => `<li>${esc(q)}</li>`).join('');
+  if (compact) return `<details class="brief"><summary>Board briefing and questions to ask</summary><p>${esc(r.briefing)}</p>${qs ? `<ul>${qs}</ul>` : ''}</details>`;
+  return `<div class="brief"><div class="bt">Board briefing</div><p>${esc(r.briefing)}</p>${qs ? `<div class="bt" style="margin-top:10px">Questions to ask your CEO</div><ul>${qs}</ul>` : ''}</div>`;
+}
 
 function leanHtml(p) {
   const l = p.lean;
