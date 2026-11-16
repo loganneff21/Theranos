@@ -187,6 +187,8 @@ const groups = ['Board 1', 'Board 2', 'Board 3', 'Board 4', 'Board 5', 'Board 6'
 const pitchRounds = [
   {
     topic: 'Military',
+    briefing: 'Theranos is a private blood-testing startup. It says its device can run many tests from a few drops of blood, and it is opening testing centers inside Walgreens stores. Device details are kept confidential as trade secrets.',
+    ask: ['Which military units use it, and where?', 'Can we see a contract or a report from the military?'],
     company: 'Theranos',
     said: 'Theranos told investors',
     cards: [
@@ -199,18 +201,22 @@ const pitchRounds = [
   {
     // Not Theranos: the same governance failure at an electric-truck startup.
     topic: 'The electric truck',
+    briefing: 'It is December 2016. Nikola, a startup building hydrogen-electric semi trucks, is unveiling its first prototype, the Nikola One, at a launch event in Salt Lake City. It says buyers have placed billions of dollars in preorders. Production is years away.',
+    ask: ['Has the truck driven under its own power?', 'Can we see it drive, not just sit on a stage?'],
     company: 'Nikola',
     said: 'Nikola’s founder told the public',
     cards: [
       { kind: 'honest', text: 'Our truck prototype can’t drive under its own power yet.' },
       { kind: 'exaggeration', text: 'Our prototype is nearly ready for the road.' },
-      { kind: 'lie', text: 'The Nikola One is a fully functioning prototype.' },
+      { kind: 'lie', text: 'This is a real truck. This is not a pusher.' },
     ],
     truth: 'At its 2016 launch the truck was missing gears and motors and was powered by an external battery. A later promo video of it “in motion” was filmed by rolling it down a hill. Founder Trevor Milton was convicted of fraud in 2022 and sentenced to four years; he was pardoned in March 2025.',
   },
   {
     // Not Theranos: a big public bank whose board missed it for years.
     topic: 'Cross-selling',
+    briefing: 'Wells Fargo is one of the largest US banks. Its strategy is cross-selling: getting existing customers to use more of its products, like a credit card or a second account. Investors reward it for how many products each household holds.',
+    ask: ['How do you know customers wanted and use these accounts?', 'What happens to employees who miss their sales goals?'],
     company: 'Wells Fargo',
     said: 'Wells Fargo told investors',
     cards: [
@@ -222,6 +228,8 @@ const pitchRounds = [
   },
   {
     topic: 'Revenue',
+    briefing: 'It is 2014. Theranos has raised more than $400 million, including $50 million from a national pharmacy chain, and its testing centers in Walgreens stores opened recently. It is private, so it publishes no financial statements, and it has had no CFO since 2008.',
+    ask: ['How many tests are you running each month right now?', 'Can we see this year’s revenue, checked by a CFO or auditor?'],
     company: 'Theranos',
     said: 'Theranos told investors',
     cards: [
@@ -234,6 +242,8 @@ const pitchRounds = [
   {
     // Not Theranos: the classic case of a board that waived its own rules.
     topic: 'The energy giant',
+    briefing: 'It is September 2001. Enron is one of America’s largest energy companies. In August its CEO, Jeff Skilling, quit after about six months, citing personal reasons, and Chairman Ken Lay took the job back. The stock has fallen by more than half from its high of about $90.',
+    ask: ['Why did the CEO really leave?', 'What exactly is in the partnerships the CFO runs?'],
     company: 'Enron',
     said: 'Enron’s CEO told employees',
     cards: [
@@ -246,6 +256,8 @@ const pitchRounds = [
   {
     // Not Theranos: a giant public company with a board that missed it too.
     topic: 'Clean engines',
+    briefing: 'Volkswagen sells its diesel cars in the US as a cleaner, fuel-efficient choice under the name “Clean Diesel.” Diesel engines normally produce more nitrogen oxide (NOx) pollution than gasoline engines, which makes strict US limits hard to meet.',
+    ask: ['How do your diesels meet US limits when that’s so hard for diesel engines?', 'Have they been tested on the road, not just in the lab?'],
     company: 'Volkswagen',
     said: 'Volkswagen advertised',
     cards: [
