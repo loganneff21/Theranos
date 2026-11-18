@@ -643,7 +643,7 @@ const views = {
     const head = titlebar(`Activity #1 · Round ${r.number} of ${r.total}`, esc(r.company) + ': ' + esc(r.topic), {
       pick: `Every CEO is now the CEO of ${esc(r.company)}. CEOs pick a card. Boards, read the briefing.`,
       decide: 'CEOs: pitch it out loud. Boards: Believe or Challenge on your phones. A lab test costs one drop.',
-      reveal: 'Here’s what your CEO told your board, and what the real CEO said.',
+      reveal: 'Here’s what each CEO told each board, and what the real CEO said.',
     }[r.stage]);
     if (r.stage !== 'reveal') {
       const many = S.pitchGroups.length > 4;
