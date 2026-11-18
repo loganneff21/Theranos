@@ -72,6 +72,10 @@ input{display:block;width:100%;font-size:20px;font-weight:600;padding:15px 14px;
 .pcard .tx{font-family:var(--quote);font-size:24px;line-height:1.16;margin:10px 0 8px}
 .pcard .pts{font-size:14px;font-weight:600;color:var(--gray)}
 .pcard.on .pts{color:#B9D3CD}
+.pcard .why{font-size:15px;font-style:italic;line-height:1.3;margin:0 0 8px;color:var(--gray)}
+.pcard.on .why{color:#D7E6E2}
+.secret{background:#FFF4F4;border:2px dashed #B3122E;border-radius:16px;padding:12px 14px;margin-top:12px;font-size:16px;line-height:1.35}
+.secret b{display:block;color:#B3122E;font-size:14px;margin-bottom:4px}
 /* What the CEO said, as a speech bubble. */
 .claim{position:relative;font-family:var(--quote);font-size:27px;line-height:1.16;background:#fff;border:2px solid var(--ink);border-radius:20px;padding:16px 16px 18px;margin:14px 0 24px}
 .claim:after{content:'';position:absolute;left:28px;bottom:-11px;width:18px;height:18px;background:#fff;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);-webkit-transform:rotate(45deg);transform:rotate(45deg)}
@@ -318,14 +322,15 @@ const V = {
     }
     if (p.role === 'ceo') {
       if (r.stage === 'pick') {
-        return `${head}<h2>You’re the CEO of ${esc(r.company)}. What will you tell your board?</h2><p>Tap a card. You can change it until the host moves on.</p>
+        return `${head}<h2>You’re the CEO of ${esc(r.company)}. What will you tell your board?</h2><p style="margin-top:10px"><b>The briefing (your board reads this same one):</b></p>${briefHtml(r)}
+          ${p.ceoBrief ? `<div class="secret"><b>🔒 Your private briefing (only you see this)</b>${esc(p.ceoBrief)}</div>` : ''}
+          <p style="margin-top:12px">Tap a card. You can change it until the host moves on.</p>
           ${p.cards.map((c, i) => `<button class="pcard ${p.picked === i ? 'on' : ''}" data-i="${i}"><span class="lab ${c.kind}">${esc(c.label)}</span>
-            <div class="tx">${esc(c.text)}</div><div class="pts">If believed: ${sign(c.ifBelieved)} · If challenged: ${sign(c.ifChallenged)}${p.immune && c.ifChallenged < 0 ? ' (immune: 0)' : ''}</div></button>`).join('')}
-          ${p.picked !== null ? '<div class="ok" style="margin-top:12px">✓ Now read it aloud to your board.</div>' : ''}
-          <p style="margin-top:16px">Your board sees this briefing:</p>${briefHtml(r)}`;
+            <div class="tx">${esc(c.text)}</div>${c.note ? `<div class="why">${esc(c.note)}</div>` : ''}<div class="pts">If believed: ${sign(c.ifBelieved)} · If challenged: ${sign(c.ifChallenged)}${p.immune && c.ifChallenged < 0 ? ' (immune: 0)' : ''}</div></button>`).join('')}
+          ${p.picked !== null ? '<div class="ok" style="margin-top:12px">✓ Now read it aloud to your board.</div>' : ''}`;
       }
       const c = p.cards[p.picked];
-      return `${head}<h2>Your board is deciding…</h2><div class="claim">${esc(c.text)}</div><p>Hold your poker face.${p.immune ? ' You’re immune: getting caught costs you nothing.' : ''}</p>`;
+      return `${head}<h2>Your board is deciding…</h2><div class="claim">${esc(c.text)}</div>${c.note ? `<div class="secret"><b>🔒 What you know</b>${esc(c.note)}</div>` : ''}<p>Hold your poker face.${p.immune ? ' You’re immune: getting caught costs you nothing.' : ''}</p>`;
     }
     if (r.stage === 'pick') return `${head}<h2>You’re on the board of ${esc(r.company)}</h2><p>${esc(p.ceoName)} is choosing what to tell you. Read your briefing while you wait.</p>${briefHtml(r)}`;
     return `${head}<div class="muted">${esc(p.ceoName)}, CEO of ${esc(r.company)}, says:</div><div class="claim">${esc(p.claim)}</div>
