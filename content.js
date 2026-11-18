@@ -6,7 +6,7 @@ const motions = [
     id: 'w0',
     title: 'Warm-up',
     concept: 'Lecture: "Would you invest?"',
-    text: 'A company has a CEO who is also Chair of the Board, a board made up mostly of insiders, and CEO pay tied heavily to short-term stock price. Would you invest?',
+    text: 'A company’s CEO also runs its board of directors, most directors work for the company, and the CEO’s pay depends mostly on this year’s stock price. Would you invest?',
     options: ['Yes', 'No', 'Not sure'],
     sound: [], // opinion poll, no points
     warmup: true,
@@ -194,7 +194,7 @@ const pitchRounds = [
     cards: [
       { kind: 'honest', text: 'The military has not deployed our technology yet.' },
       { kind: 'exaggeration', text: 'The military is very interested in what we’re building.' },
-      { kind: 'lie', text: 'Our products are deployed on the battlefield in Afghanistan and on medevac helicopters.' },
+      { kind: 'lie', text: 'Our products are deployed on the battlefield in Afghanistan and on medevac (medical rescue) helicopters.' },
     ],
     truth: 'According to the SEC’s 2018 complaint, Theranos’s technology was never deployed by the Department of Defense.',
   },
@@ -283,7 +283,7 @@ const pointsScale = 100; // pitch points x 100 go on each player's game total
 
 const superAfter = 3; // the 99.7% vote comes after this many rounds
 const superMotion = {
-  text: 'Your CEO proposes 100 votes for every share she owns: about 99.7% of all voting rights.',
+  text: 'Your CEO wants super-voting shares: 100 votes for every share they own, about 99.7% of all shareholder votes. Shareholders elect the board, so the CEO could replace any director, and the board could never fire the CEO.',
   approve: { ceo: 2, board: -1, effect: 'The CEO can no longer lose points for getting caught.' },
   reject: { ceo: 0, board: 1 },
   real: 'The real Theranos board approved it. After that, the board could not hold Holmes accountable: she controlled the votes that elect the board.',
