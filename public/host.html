@@ -617,17 +617,17 @@ const views = {
       <div class="cb"><div><div class="kicker">Your warm-up vote</div>
         <div style="font-size:24px;line-height:1.3">${esc(w.text)}</div>
         <div class="bars">${w.options.map((o, i) => `<div class="bar ${['', 'no', 'alt'][i]}"><div class="lab">${esc(o)}</div><div class="track"><div class="fill" style="width:${pct(w.tally[o], total)}%"></div></div><div class="n">${w.tally[o]}</div></div>`).join('')}</div>
-        <div class="punch" style="font-size:24px;border-color:#4b2e83">${noPct}% of you wouldn’t invest in that company. But Theranos’s board was famous outsiders, not insiders, and it still failed: independence on paper isn’t oversight.</div></div>
+        <div class="punch" style="font-size:24px;border-color:#4b2e83">${noPct}% of you wouldn’t invest in that company. But Theranos’s directors were famous outsiders who didn’t work for the company, and the board still failed: independence on paper isn’t oversight.</div></div>
       <div class="mechs">${mech.map((m, i) => `<div class="mech" style="animation-delay:${0.4 + i * 0.7}s"><h4>${m[0]}</h4><b>${m[1]}</b><p>${m[2]}</p></div>`).join('')}</div></div>`;
   },
 
   pitchRules: () => {
     const pp = C.pitchPoints;
     const row = (k, l) => `<tr><td>${l}</td><td>${fmt(pp[k].believe[0])} / ${fmt(pp[k].believe[1])}</td><td>${fmt(pp[k].challenge[0])} / ${fmt(pp[k].challenge[1])}</td></tr>`;
-    return `${titlebar('Activity #1 · The Pitch', 'CEO vs. the Board', 'One person in each group becomes CEO. Everyone else is the board.')}
+    return `${titlebar('Activity #1 · The Pitch', 'CEO vs. the Board', 'Each round, every group plays the same real company. One person is CEO; everyone else is the board.')}
       <div class="rules3 fade">
         <div><h3>The CEO</h3><ul><li>Each round, picks one of three claims: <b>honest</b>, <b>exaggerated</b> or a <b>lie</b></li><li>Reads it aloud to the board, with confidence</li><li>Less true pays more, if the board believes it</li></ul></div>
-        <div><h3>The Board</h3><ul><li>Votes <b>Believe</b> or <b>Challenge</b> on their phones</li><li>Has ${C.verifyTokens} <b>lab tests</b> for the whole game: run one to see the truth</li><li>Ties go to the CEO</li><li>Whole board agrees and is right: <b>+${C.unanimousBonus} bonus</b></li></ul></div>
+        <div><h3>The Board</h3><ul><li>Reads a short briefing about the company</li><li>Votes <b>Believe</b> (it’s true) or <b>Challenge</b> (it’s exaggerated or a lie)</li><li>Has ${C.verifyTokens} <b>lab tests</b> for the whole game: run one to see the truth</li><li>Ties go to the CEO</li><li>Whole board agrees and is right: <b>+${C.unanimousBonus} bonus</b></li></ul></div>
         <div><h3>Scoring <span style="font-size:18px;color:var(--gray);font-weight:400">(CEO / Board)</span></h3>
           <table class="stab"><tr><th></th><th>Believed</th><th>Challenged</th></tr>${row('honest', 'Honest')}${row('exaggeration', 'Exaggeration')}${row('lie', 'Lie')}</table>
           <div class="sub" style="font-size:20px;margin-top:10px">${C.pitchRoundCount} rounds, with a surprise in the middle.</div></div>

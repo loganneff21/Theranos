@@ -292,10 +292,12 @@ const V = {
     const p = S.me.pitch;
     if (p.role === 'solo') return wait('Your group needs one more person', 'Find a teammate: the game needs a CEO and at least one board member.');
     if (p.role === 'ceo') return `<div class="center" style="padding-top:4vh"><div class="kicker">The Pitch</div><div class="ceobadge fade"><div class="big">You are the CEO</div><p style="color:#ddd;margin-top:8px">Stand up and introduce yourself to your board. Your cards appear here each round, so keep your screen to yourself.</p></div>
-      <p style="margin-top:16px">Pick a claim, then read it aloud to your board like you mean it.</p></div>`;
+      <div class="box" style="text-align:left;margin-top:16px"><b style="display:inline">How it works:</b> each round you play the CEO of a real company and pick one of three claims to tell your board: <b style="display:inline">honest</b>, <b style="display:inline">exaggerated</b> or a <b style="display:inline">lie</b>. The riskier the claim, the more you win if your board believes it, and the more you lose if they catch you.</div>
+      <p style="margin-top:12px">Pick a claim, then read it aloud to your board like you mean it.</p></div>`;
     return `<div class="center" style="padding-top:4vh"><div class="kicker">The Pitch</div><h2>You’re on the board</h2>
       <div class="big" style="font-size:34px">${esc(p.ceoName)}</div><p>is your CEO. Decide what to believe.</p>
-      <div class="box">Your board can run <b style="display:inline">${p.tokens} lab test${p.tokens === 1 ? '' : 's'}</b> this game. A test shows whether a claim is true.</div></div>`;
+      <div class="box" style="text-align:left"><b style="display:inline">How it works:</b> each round your CEO tells you something about a real company. Vote <b style="display:inline">Believe</b> if you think it’s true, or <b style="display:inline">Challenge</b> if you think it’s exaggerated or a lie. You score for trusting the truth and catching lies, and lose points when you fall for one.</div>
+      <div class="box">Your board can run <b style="display:inline">${p.tokens} lab test${p.tokens === 1 ? '' : 's'}</b> this game. A test shows whether a claim is true before you vote.</div></div>`;
   },
   pitchRound: () => {
     const p = S.me.pitch, r = S.round;
@@ -311,6 +313,7 @@ const V = {
         <div class="big" style="font-size:36px">${esc(res.label)}</div><div style="font-size:18px;margin-top:6px">${esc(msg)} ${mine > 0 ? '+' : ''}${mine} ${p.role === 'ceo' ? 'for you' : 'for the board'}</div></div>
         ${res.united && p.role !== 'ceo' ? `<div class="ok" style="font-size:17px;margin-top:10px">United board bonus: +${C.unanimousBonus} included</div>` : ''}
         <div class="claim" style="font-size:18px">${esc(res.text)}</div>
+        ${realHtml(r)}
         <div class="vrow"><span>${p.role === 'ceo' ? 'Your CEO points' : 'Board points'}</span><b>${p.teamPoints}</b></div>`;
     }
     if (p.role === 'ceo') {
@@ -329,6 +332,7 @@ const V = {
       ${p.verified ? `<div class="truthtag lab ${p.truthLabel.toLowerCase()}">Test result: ${p.truthLabel === 'Honest' ? 'honest' : p.truthLabel === 'Lie' ? 'a lie' : 'an exaggeration'}</div>` : ''}
       ${briefHtml(r)}
       <div id="lean">${leanHtml(p)}</div>
+      <p style="font-size:15px;margin:4px 0 10px"><b style="display:inline">Believe</b> = you think it’s true. <b style="display:inline">Challenge</b> = you think it’s exaggerated or a lie.</p>
       <button class="vbtn believe ${p.myVote === 'believe' ? 'on' : ''}" data-v="believe">Believe</button>
       <button class="vbtn challenge ${p.myVote === 'challenge' ? 'on' : ''}" data-v="challenge">Challenge</button>
       ${p.verified ? '' : `<button class="verify" id="verify" ${p.tokens <= 0 ? 'disabled' : ''}>${drops(p.tokens)} ${p.tokens > 0 ? 'Run the test on this claim' : 'No tests left'}</button><p style="font-size:14px;text-align:center;margin-top:8px">A test shows your whole board the truth. You get ${C.verifyTokens} for the game.</p>`}
@@ -406,6 +410,11 @@ const V = {
   },
 };
 
+function realHtml(r) {
+  if (!r.truth || !r.cards) return '';
+  const lie = r.cards.find((c) => c.kind === 'lie');
+  return `<div class="brief"><div class="bt">${r.company === 'Theranos' ? 'What came out later' : 'What really happened'}</div><p style="font-family:inherit;font-size:16px;line-height:1.35">${esc(r.said)}: “${esc(lie.text)}” ${esc(r.truth)}</p></div>`;
+}
 function briefHtml(r, compact) {
   if (!r.briefing) return '';
   const qs = (r.ask || []).map((q) => `<li>${esc(q)}</li>`).join('');
