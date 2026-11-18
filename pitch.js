@@ -228,6 +228,7 @@ function meView(game, p, ph) {
     const pickIdx = round.picks[p.group];
     if (role === 'ceo') {
       out.cards = def.cards.map((c) => ({ ...c, label: C.kindLabel[c.kind], ifBelieved: C.pitchPoints[c.kind].believe[0], ifChallenged: C.pitchPoints[c.kind].challenge[0] }));
+      out.ceoBrief = def.ceoBrief;
       out.picked = pickIdx === undefined ? null : pickIdx;
     } else if (round.stage !== 'pick') {
       out.claim = def.cards[pickIdx].text;
