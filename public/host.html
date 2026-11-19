@@ -699,7 +699,7 @@ const views = {
       <div class="final"><div><div class="kicker">Top CEOs</div><div class="board" style="margin-top:12px">${S.ceoBoard.map((g, i) => lrow(i + 1, g.ceo, g.group, fmt(g.total.ceo), Math.max(0, g.total.ceo) / maxC, i)).join('')}</div></div>
       <div><div class="kicker">Top Boards</div><div class="board" style="margin-top:12px">${S.boardBoard.map((g, i) => lrow(i + 1, g.group, g.boardSize + (g.boardSize === 1 ? ' member' : ' members'), fmt(g.total.board), Math.max(0, g.total.board) / maxB, i)).join('')}</div></div></div>`;
   },
-  pitchTruth: () => `<div class="dense">${titlebar('Activity #1 · These were real', 'Every lie card was a real claim', 'Two from Theranos (from later SEC complaints, not what the board knew then), four from other companies whose boards missed it too.')}
+  pitchTruth: () => `<div class="dense">${titlebar('Activity #1 · These were real', 'Every lie card was a real claim', 'One from Theranos (from the SEC’s 2018 complaint, not what the board knew then), five from other companies where nobody checked in time.')}
       <table class="ptab">${S.truths.map((t, i) => `<tr style="animation-delay:${0.3 + i * 0.6}s"><td style="width:13%"><b>${esc(t.company)}</b></td><td style="width:36%;font-family:var(--serif);font-size:24px;line-height:1.15">“${esc(t.lie)}”</td><td style="font-size:17px;line-height:1.28">${esc(t.truth)}</td></tr>`).join('')}</table>
       <div class="punch fade" style="animation-delay:4.2s">${S.superApproved} of ${S.pitchGroups.length} of your boards gave their CEO 99.7% of the votes. The real board did too.</div></div>`,
   slidesBreak: () => `<div class="big-center"><div><div class="kicker">Back to the presentation</div><h1>Phones down for now</h1>
