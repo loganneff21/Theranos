@@ -640,7 +640,7 @@ const views = {
   },
   pitchRound: () => {
     const r = S.round;
-    const head = titlebar(`Activity #1 · Round ${r.number} of ${r.total}`, r.company ? 'It was ' + esc(r.company) + '!' : 'Mystery company: ' + esc(r.topic), {
+    const head = titlebar(`Activity #1 · Round ${r.number} of ${r.total}`, r.company ? 'It was ' + esc(r.company) + '!' : 'Unknown Company', {
       pick: `Every CEO now runs ${esc(r.alias)}. The name is revealed at the end of the round.`,
       decide: 'CEOs: pitch it out loud. Boards: Believe or Challenge on your phones. A lab test costs one drop.',
       reveal: 'Here’s what each CEO told each board, and what the real CEO said.',
@@ -656,7 +656,7 @@ const views = {
           <div class="right">${st}<div class="toks">${tokens(g.tokens)}</div></div>
           ${r.stage === 'decide' ? `<div class="meter"><i style="width:${pct(g.voted, g.boardSize)}%"></i></div>` : ''}</div>`;
       }).join('');
-      const brief = r.briefing ? `<div class="casefile"><div class="tabk">Board briefing · Mystery company</div><p>${esc(r.briefing)}</p>
+      const brief = r.briefing ? `<div class="casefile"><div class="tabk">Board briefing · Unknown company</div><p>${esc(r.briefing)}</p>
         ${r.ask && r.ask.length ? `<div class="askh">Ask your CEO</div><ol>${r.ask.map((q) => `<li>${esc(q)}</li>`).join('')}</ol>` : ''}</div>` : '';
       return `${head}<div class="roundgrid">${brief}<div class="seats ${many ? 'many' : ''}">${seats}</div></div>`;
     }

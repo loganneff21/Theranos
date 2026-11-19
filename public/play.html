@@ -305,7 +305,7 @@ const V = {
   },
   pitchRound: () => {
     const p = S.me.pitch, r = S.round;
-    const head = `<div class="kicker">Round ${r.number} of ${r.total}: ${r.company ? esc(r.company) + ' (revealed)' : 'Mystery company'} · ${esc(r.topic)}</div>`;
+    const head = `<div class="kicker">Round ${r.number} of ${r.total}: ${r.company ? esc(r.company) : 'Unknown company'}</div>`;
     if (p.role === 'solo') return head + wait('Sit this round out', 'Your group needs at least two people.');
     if (r.stage === 'reveal' && p.result) {
       const res = p.result, mine = res.mine;
