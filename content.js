@@ -182,8 +182,8 @@ const groups = ['Board 1', 'Board 2', 'Board 3', 'Board 4', 'Board 5', 'Board 6'
 
 // ---------------- Activity #1: The Pitch (CEO vs. board) ----------------
 // Every lie card is a real claim. Theranos rounds come from the SEC's 2018 complaint against Holmes and
-// Balwani (allegations; both were later convicted of fraud). Four rounds use other companies (Nikola,
-// Wells Fargo, Enron, Volkswagen) to show the same governance failure elsewhere. None of this is in the IMD case reading.
+// Balwani (allegations; both were later convicted of fraud). Five rounds use other companies (Nikola,
+// Wells Fargo, Frank, Enron, FTX) to show the same governance failure elsewhere. None of this is in the IMD case reading.
 const pitchRounds = [
   {
     topic: 'Military',
@@ -230,18 +230,18 @@ const pitchRounds = [
     truth: 'To hit sales goals, employees opened millions of accounts customers never asked for. In 2020 Wells Fargo paid $3 billion to settle with the Justice Department and the SEC, which said it misled investors about its “needs-based” sales model.',
   },
   {
-    topic: 'Revenue',
-    briefing: 'It is 2014. Theranos has raised more than $400 million, including $50 million from a national pharmacy chain, and its testing centers in Walgreens stores opened recently. It is private, so it publishes no financial statements, and it has had no CFO since 2008.',
-    ask: ['How many tests are you running each month right now?', 'Can we see this year’s revenue, checked by a CFO or auditor?'],
-    company: 'Theranos',
-    said: 'Theranos told investors',
-    ceoBrief: 'What only you know: actual revenue this year is about $100,000. The Walgreens centers are few, and your own device runs only a small share of the tests. There is no CFO to check the numbers.',
+    topic: 'Users',
+    briefing: 'It is 2021. Frank is a startup that helps college students fill out financial aid (FAFSA) forms. Its young founder made the Forbes 30 Under 30 list. JPMorgan Chase wants to buy Frank to reach young customers, and the price depends on how many users Frank has.',
+    ask: ['How many people have actually signed up for Frank?', 'Can an outside firm check the customer list before the deal closes?'],
+    company: 'Frank',
+    said: 'Frank told JPMorgan',
+    ceoBrief: 'What only you know: fewer than 300,000 people have signed up for Frank. JPMorgan expects millions. You could pay someone to build a fake customer list that looks real.',
     cards: [
-      { kind: 'honest', text: 'Our revenue so far is small: about $100,000 this year.' , note: 'True. A tiny number next to a huge valuation.'},
-      { kind: 'exaggeration', text: 'Our revenue is about to take off once we roll out nationwide.' , note: 'Hopeful. Nothing yet shows a nationwide rollout is close.'},
-      { kind: 'lie', text: 'We will generate more than $100 million in revenue this year.' , note: 'False. You’re about 1,000 times short.'},
+      { kind: 'honest', text: 'We have fewer than 300,000 users.', note: 'True. JPMorgan would likely pay far less, or walk away.' },
+      { kind: 'exaggeration', text: 'We are one of the fastest-growing financial aid tools for students.', note: 'Vague bragging. It hides how small Frank really is.' },
+      { kind: 'lie', text: 'Frank has more than 4 million student users.', note: 'False. You have fewer than 300,000.' },
     ],
-    truth: 'According to the SEC, Theranos told investors it would generate more than $100 million in 2014 revenue. It actually generated a little more than $100,000.',
+    truth: 'JPMorgan paid $175 million for Frank. According to the SEC and federal prosecutors, Frank had fewer than 300,000 users, and the founder paid a professor to create fake data for 4.25 million. She was convicted of fraud in 2025.',
   },
   {
     // Not Theranos: the classic case of a board that waived its own rules.
@@ -259,19 +259,18 @@ const pitchRounds = [
     truth: 'On September 26, 2001, Ken Lay called the stock an incredible bargain. Weeks later Enron cut its past profits by $586 million because partnerships run by its CFO had hidden losses and debt. It went bankrupt in December 2001.',
   },
   {
-    // Not Theranos: a giant public company with a board that missed it too.
-    topic: 'Clean engines',
-    briefing: 'It is 2014. Volkswagen sells its diesel cars in the US as a cleaner, fuel-efficient choice called “Clean Diesel.” Diesel engines normally produce more nitrogen oxide (NOx) pollution than gasoline engines, which makes strict US limits hard to meet.',
-    ask: ['How do your diesels meet US limits when that’s so hard for diesel engines?', 'Have they been tested on the road, not just in the lab?'],
-    company: 'Volkswagen',
-    said: 'Volkswagen advertised',
-    ceoBrief: 'What only you know: your engineers installed software that detects emissions tests and switches pollution controls on only during the test. On the road, the cars pollute far above the US limit.',
+    topic: 'Customer money',
+    briefing: 'It is November 2022. FTX is one of the world’s biggest crypto exchanges, valued at $32 billion and run by its 30-year-old founder. Customers keep their money and crypto on FTX to trade. A news report just raised questions about FTX’s sister trading firm, Alameda Research, and customers are rushing to pull their money out.',
+    ask: ['Has any customer money been lent to Alameda or used for anything else?', 'Can we see proof that every customer’s deposit is still there?'],
+    company: 'FTX',
+    said: 'Founder Sam Bankman-Fried tweeted',
+    ceoBrief: 'What only you know: billions of dollars of customer deposits have been moved to Alameda Research, your trading firm, and spent or lost. If every customer asks for their money back, FTX can’t pay.',
     cards: [
-      { kind: 'honest', text: 'Our diesel cars can’t meet US emissions limits in normal driving.' , note: 'True. Saying it would end the “Clean Diesel” campaign.'},
-      { kind: 'exaggeration', text: 'Our diesels are among the cleanest cars on the road.' , note: 'Only during testing. On the road they are not.'},
-      { kind: 'lie', text: 'Our Clean Diesel cars are low-emission and meet emissions standards.' , note: 'False. They pass only because the software cheats the test.'},
+      { kind: 'honest', text: 'Some customer money went to Alameda, and we can’t cover every withdrawal right now.', note: 'True. Saying it would likely make the rush to withdraw even worse.' },
+      { kind: 'exaggeration', text: 'We’re processing withdrawals as fast as we can, and the rush will pass.', note: 'Spin. The problem isn’t speed: the money isn’t there.' },
+      { kind: 'lie', text: 'FTX has enough to cover all client holdings. We don’t invest client assets.', note: 'False. Customer money was moved to Alameda.' },
     ],
-    truth: 'About 11 million cars carried software that cheated emissions tests. On the road they emitted up to 40 times the US limit. Volkswagen admitted it in 2015.',
+    truth: 'FTX stopped withdrawals the next day and filed for bankruptcy on November 11, 2022. In 2023 a jury convicted Bankman-Fried of fraud for taking billions of dollars of customer money. He was sentenced to 25 years in prison.',
   },
 ];
 
