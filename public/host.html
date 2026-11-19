@@ -370,7 +370,7 @@ h2{font-size:58px;line-height:1.02}
 .rules3>div{background:#fff;border:2px solid var(--line);border-radius:22px;padding:22px 26px}
 .rules3 ul{font-size:24px}
 .stab{border-radius:14px;overflow:hidden;font-size:23px}
-.ptab{border-collapse:separate;border-spacing:0 8px;margin-top:-8px}
+.ptab{border-collapse:separate;border-spacing:0 6px;margin-top:-8px}
 .ptab td{border-bottom:0;padding:12px 16px}
 .ptab tr td:first-child{border-radius:14px 0 0 14px}.ptab tr td:last-child{border-radius:0 14px 14px 0}
 .punch{border-radius:18px;font-size:27px}
@@ -382,7 +382,7 @@ h2{font-size:58px;line-height:1.02}
 .mech{padding:16px 22px}
 .mech b{font-size:32px}
 .dense h2{font-size:46px}.dense .sub{font-size:21px}.dense .titlebar{margin-bottom:14px}
-.dense .ptab td{padding:7px 14px}.dense .punch{margin-top:12px;font-size:23px;padding:10px 20px}
+.dense .ptab td{padding:5px 14px}.dense .punch{margin-top:12px;font-size:23px;padding:10px 20px}
 .final .board{gap:14px}.final .row .nm{height:66px}.final .row .nm span{line-height:62px;font-size:31px}.final .row .v{font-size:38px}
 .gcard.sv .ceo{font-size:34px}.gcard.sv.app{border-color:var(--red);box-shadow:0 6px 0 var(--red)}.gcard.sv.rej{border-color:var(--teal-d);box-shadow:0 6px 0 var(--teal-d)}
 </style>
@@ -624,7 +624,7 @@ const views = {
   pitchRules: () => {
     const pp = C.pitchPoints;
     const row = (k, l) => `<tr><td>${l}</td><td>${fmt(pp[k].believe[0])} / ${fmt(pp[k].believe[1])}</td><td>${fmt(pp[k].challenge[0])} / ${fmt(pp[k].challenge[1])}</td></tr>`;
-    return `${titlebar('Activity #1 · The Pitch', 'CEO vs. the Board', 'Each round, every group plays the same real company. One person is CEO; everyone else is the board.')}
+    return `${titlebar('Activity #1 · The Pitch', 'CEO vs. the Board', 'Each round, every group plays the same real company. Its name stays secret until the reveal. One person is CEO; everyone else is the board.')}
       <div class="rules3 fade">
         <div><h3>The CEO</h3><ul><li>Each round, picks one of three claims: <b>honest</b>, <b>exaggerated</b> or a <b>lie</b></li><li>Reads it aloud to the board, with confidence</li><li>Less true pays more, if the board believes it</li></ul></div>
         <div><h3>The Board</h3><ul><li>Reads a short briefing about the company</li><li>Votes <b>Believe</b> (it’s true) or <b>Challenge</b> (it’s exaggerated or a lie)</li><li>Has ${C.verifyTokens} <b>lab tests</b> for the whole game: run one to see the truth</li><li>Ties go to the CEO</li><li>Whole board agrees and is right: <b>+${C.unanimousBonus} bonus</b></li></ul></div>
@@ -640,8 +640,8 @@ const views = {
   },
   pitchRound: () => {
     const r = S.round;
-    const head = titlebar(`Activity #1 · Round ${r.number} of ${r.total}`, esc(r.company) + ': ' + esc(r.topic), {
-      pick: `Every CEO is now the CEO of ${esc(r.company)}. CEOs pick a card. Boards, read the briefing.`,
+    const head = titlebar(`Activity #1 · Round ${r.number} of ${r.total}`, r.company ? 'It was ' + esc(r.company) + '!' : 'Mystery company: ' + esc(r.topic), {
+      pick: `Every CEO now runs ${esc(r.alias)}. The name is revealed at the end of the round.`,
       decide: 'CEOs: pitch it out loud. Boards: Believe or Challenge on your phones. A lab test costs one drop.',
       reveal: 'Here’s what each CEO told each board, and what the real CEO said.',
     }[r.stage]);
@@ -656,7 +656,7 @@ const views = {
           <div class="right">${st}<div class="toks">${tokens(g.tokens)}</div></div>
           ${r.stage === 'decide' ? `<div class="meter"><i style="width:${pct(g.voted, g.boardSize)}%"></i></div>` : ''}</div>`;
       }).join('');
-      const brief = r.briefing ? `<div class="casefile"><div class="tabk">Board briefing · ${esc(r.company)}</div><p>${esc(r.briefing)}</p>
+      const brief = r.briefing ? `<div class="casefile"><div class="tabk">Board briefing · Mystery company</div><p>${esc(r.briefing)}</p>
         ${r.ask && r.ask.length ? `<div class="askh">Ask your CEO</div><ol>${r.ask.map((q) => `<li>${esc(q)}</li>`).join('')}</ol>` : ''}</div>` : '';
       return `${head}<div class="roundgrid">${brief}<div class="seats ${many ? 'many' : ''}">${seats}</div></div>`;
     }
@@ -675,7 +675,7 @@ const views = {
           <div class="how">${res.decision === 'believe' ? 'Board believed' : 'Board challenged'}${res.verified ? ' · tested' : ''}${res.united ? ` · <em>united +${C.unanimousBonus}</em>` : ''}${res.immune && res.kind !== 'honest' && res.decision === 'challenge' ? ' · <em style="color:var(--red)">CEO immune</em>' : ''}</div>
           <div class="pts"><div>CEO<b class="${cls(res.ceo)}">${fmt(res.ceo)}</b></div><div>Board<b class="${cls(res.board)}">${fmt(res.board)}</b></div></div></div>`;
       }).join('')}</div>
-      <div class="truthbox"><b>${r.company === 'Theranos' ? 'What came out later (SEC, 2018), not what the board knew then' : 'What really happened at ' + esc(r.company)}</b>${esc(r.said)}: “${esc(lie.text)}” ${esc(r.truth)}</div>`;
+      <div class="truthbox"><b>${r.company === 'Theranos' ? 'What came out later (SEC, 2018), not what the board knew then' : 'What really happened at ' + esc(r.company)}</b>${esc(r.said)}: “${esc(lie.quote || lie.text)}” ${esc(r.truth)}</div>`;
   },
   superVote: () => {
     const sv = S.superVote;
@@ -700,7 +700,7 @@ const views = {
       <div><div class="kicker">Top Boards</div><div class="board" style="margin-top:12px">${S.boardBoard.map((g, i) => lrow(i + 1, g.group, g.boardSize + (g.boardSize === 1 ? ' member' : ' members'), fmt(g.total.board), Math.max(0, g.total.board) / maxB, i)).join('')}</div></div></div>`;
   },
   pitchTruth: () => `<div class="dense">${titlebar('Activity #1 · These were real', 'Every lie card was a real claim', 'One from Theranos (from the SEC’s 2018 complaint, not what the board knew then), five from other companies where nobody checked in time.')}
-      <table class="ptab">${S.truths.map((t, i) => `<tr style="animation-delay:${0.3 + i * 0.6}s"><td style="width:13%"><b>${esc(t.company)}</b></td><td style="width:36%;font-family:var(--serif);font-size:24px;line-height:1.15">“${esc(t.lie)}”</td><td style="font-size:17px;line-height:1.28">${esc(t.truth)}</td></tr>`).join('')}</table>
+      <table class="ptab">${S.truths.map((t, i) => `<tr style="animation-delay:${0.3 + i * 0.6}s"><td style="width:13%"><b>${esc(t.company)}</b></td><td style="width:36%;font-family:var(--serif);font-size:20px;line-height:1.12">“${esc(t.lie)}”</td><td style="font-size:15px;line-height:1.25">${esc(t.truth)}</td></tr>`).join('')}</table>
       <div class="punch fade" style="animation-delay:4.2s">${S.superApproved} of ${S.pitchGroups.length} of your boards gave their CEO 99.7% of the votes. The real board did too.</div></div>`,
   slidesBreak: () => `<div class="big-center"><div><div class="kicker">Back to the presentation</div><h1>Phones down for now</h1>
      <div class="rules">Next: how Theranos’s board actually failed.<br>Keep this page open on your phone. You’ll need it again for the final quiz.</div></div></div>`,

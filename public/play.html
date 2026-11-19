@@ -296,16 +296,16 @@ const V = {
     const p = S.me.pitch;
     if (p.role === 'solo') return wait('Your group needs one more person', 'Find a teammate: the game needs a CEO and at least one board member.');
     if (p.role === 'ceo') return `<div class="center" style="padding-top:4vh"><div class="kicker">The Pitch</div><div class="ceobadge fade"><div class="big">You are the CEO</div><p style="color:#ddd;margin-top:8px">Stand up and introduce yourself to your board. Your cards appear here each round, so keep your screen to yourself.</p></div>
-      <div class="box" style="text-align:left;margin-top:16px"><b style="display:inline">How it works:</b> each round you play the CEO of a real company and pick one of three claims to tell your board: <b style="display:inline">honest</b>, <b style="display:inline">exaggerated</b> or a <b style="display:inline">lie</b>. The riskier the claim, the more you win if your board believes it, and the more you lose if they catch you.</div>
+      <div class="box" style="text-align:left;margin-top:16px"><b style="display:inline">How it works:</b> each round you play the CEO of a real company (its name is revealed at the end of the round) and pick one of three claims to tell your board: <b style="display:inline">honest</b>, <b style="display:inline">exaggerated</b> or a <b style="display:inline">lie</b>. The riskier the claim, the more you win if your board believes it, and the more you lose if they catch you.</div>
       <p style="margin-top:12px">Pick a claim, then read it aloud to your board like you mean it.</p></div>`;
     return `<div class="center" style="padding-top:4vh"><div class="kicker">The Pitch</div><h2>You’re on the board</h2>
       <div class="big" style="font-size:34px">${esc(p.ceoName)}</div><p>is your CEO. Decide what to believe.</p>
-      <div class="box" style="text-align:left"><b style="display:inline">How it works:</b> each round your CEO tells you something about a real company. Vote <b style="display:inline">Believe</b> if you think it’s true, or <b style="display:inline">Challenge</b> if you think it’s exaggerated or a lie. You score for trusting the truth and catching lies, and lose points when you fall for one.</div>
+      <div class="box" style="text-align:left"><b style="display:inline">How it works:</b> each round your CEO tells you something about a real company. Its name stays secret until the end of the round. Vote <b style="display:inline">Believe</b> if you think it’s true, or <b style="display:inline">Challenge</b> if you think it’s exaggerated or a lie. You score for trusting the truth and catching lies, and lose points when you fall for one.</div>
       <div class="box">Your board can run <b style="display:inline">${p.tokens} lab test${p.tokens === 1 ? '' : 's'}</b> this game. A test shows whether a claim is true before you vote.</div></div>`;
   },
   pitchRound: () => {
     const p = S.me.pitch, r = S.round;
-    const head = `<div class="kicker">Round ${r.number} of ${r.total}: ${esc(r.company)} · ${esc(r.topic)}</div>`;
+    const head = `<div class="kicker">Round ${r.number} of ${r.total}: ${r.company ? esc(r.company) + ' (revealed)' : 'Mystery company'} · ${esc(r.topic)}</div>`;
     if (p.role === 'solo') return head + wait('Sit this round out', 'Your group needs at least two people.');
     if (r.stage === 'reveal' && p.result) {
       const res = p.result, mine = res.mine;
@@ -322,7 +322,7 @@ const V = {
     }
     if (p.role === 'ceo') {
       if (r.stage === 'pick') {
-        return `${head}<h2>You’re the CEO of ${esc(r.company)}. What will you tell your board?</h2><p style="margin-top:10px"><b>The briefing (your board reads this same one):</b></p>${briefHtml(r)}
+        return `${head}<h2>You’re the CEO of ${esc(r.alias)}. What will you tell your board?</h2><p style="margin-top:10px"><b>The briefing (your board reads this same one):</b></p>${briefHtml(r)}
           ${p.ceoBrief ? `<div class="secret"><b>🔒 Your private briefing (only you see this)</b>${esc(p.ceoBrief)}</div>` : ''}
           <p style="margin-top:12px">Tap a card. You can change it until the host moves on.</p>
           ${p.cards.map((c, i) => `<button class="pcard ${p.picked === i ? 'on' : ''}" data-i="${i}"><span class="lab ${c.kind}">${esc(c.label)}</span>
@@ -332,8 +332,8 @@ const V = {
       const c = p.cards[p.picked];
       return `${head}<h2>Your board is deciding…</h2><div class="claim">${esc(c.text)}</div>${c.note ? `<div class="secret"><b>🔒 What you know</b>${esc(c.note)}</div>` : ''}<p>Hold your poker face.${p.immune ? ' You’re immune: getting caught costs you nothing.' : ''}</p>`;
     }
-    if (r.stage === 'pick') return `${head}<h2>You’re on the board of ${esc(r.company)}</h2><p>${esc(p.ceoName)} is choosing what to tell you. Read your briefing while you wait.</p>${briefHtml(r)}`;
-    return `${head}<div class="muted">${esc(p.ceoName)}, CEO of ${esc(r.company)}, says:</div><div class="claim">${esc(p.claim)}</div>
+    if (r.stage === 'pick') return `${head}<h2>You’re on the board of ${esc(r.alias)}</h2><p>${esc(p.ceoName)} is choosing what to tell you. Read your briefing while you wait.</p>${briefHtml(r)}`;
+    return `${head}<div class="muted">${esc(p.ceoName)}, your CEO, says:</div><div class="claim">${esc(p.claim)}</div>
       ${p.verified ? `<div class="truthtag lab ${p.truthLabel.toLowerCase()}">Test result: ${p.truthLabel === 'Honest' ? 'honest' : p.truthLabel === 'Lie' ? 'a lie' : 'an exaggeration'}</div>` : ''}
       ${briefHtml(r)}
       <div id="lean">${leanHtml(p)}</div>
@@ -418,7 +418,7 @@ const V = {
 function realHtml(r) {
   if (!r.truth || !r.cards) return '';
   const lie = r.cards.find((c) => c.kind === 'lie');
-  return `<div class="brief"><div class="bt">${r.company === 'Theranos' ? 'What came out later' : 'What really happened'}</div><p style="font-family:inherit;font-size:16px;line-height:1.35">${esc(r.said)}: “${esc(lie.text)}” ${esc(r.truth)}</p></div>`;
+  return `<div class="brief"><div class="bt">${r.company === 'Theranos' ? 'What came out later' : 'What really happened'}</div><p style="font-family:inherit;font-size:16px;line-height:1.35">${esc(r.said)}: “${esc(lie.quote || lie.text)}” ${esc(r.truth)}</p></div>`;
 }
 function briefHtml(r, compact) {
   if (!r.briefing) return '';
